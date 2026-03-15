@@ -3,903 +3,1761 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕌 Traduction en Temps Réel - Mosquée</title>
+    <title>Traduction — Prêche du Vendredi</title>
     <style>
-        * {
+        /* =========================================
+           RESET & CUSTOM PROPERTIES
+        ========================================= */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            color: #333;
+        :root {
+            --bg:             #f5f5f5;
+            --surface:        #ffffff;
+            --surface-raised: #fafafa;
+            --border:         #e5e5e5;
+            --border-strong:  #d4d4d4;
+            --text-1:         #171717;
+            --text-2:         #525252;
+            --text-3:         #a3a3a3;
+            --accent:         #171717;
+            --accent-hover:   #404040;
+            --green:          #16a34a;
+            --green-bg:       #f0fdf4;
+            --green-border:   #bbf7d0;
+            --red:            #dc2626;
+            --red-bg:         #fef2f2;
+            --amber:          #d97706;
+            --amber-bg:       #fffbeb;
+            --blue:           #2563eb;
+            --shadow-sm:      0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md:      0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
+            --shadow-lg:      0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            --shadow-xl:      0 20px 25px -5px rgba(0,0,0,0.10), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --radius-sm:      5px;
+            --radius-md:      8px;
+            --radius-lg:      12px;
+            --radius-xl:      16px;
+            --arabic-size:    1.5rem;
+            --french-size:    1.2rem;
         }
 
-        .container {
-            max-width: 100vw;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 15px 30px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .header h1 {
-            font-size: 2.8em;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.4em;
-            opacity: 0.95;
-            font-weight: 500;
-        }
-
-        .controls {
-            padding: 20px 30px;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .btn {
-            padding: 15px 35px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 200px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d, #5a6268);
-            color: white;
-        }
-
-        .status {
-            text-align: center;
-            padding: 15px;
-            margin: 0 30px;
-            border-radius: 12px;
-            font-size: 1.3em;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .status-idle {
-            background: linear-gradient(135deg, #e9ecef, #dee2e6);
-            color: #495057;
-        }
-
-        .status-listening {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            animation: pulse 2s infinite;
-        }
-
-        .status-processing {
-            background: linear-gradient(135deg, #ffc107, #e0a800);
-            color: white;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.02); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .main-content {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 30px;
-            min-height: calc(100vh - 300px);
-        }
-
-        .panel {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            border: 3px solid transparent;
-            position: relative;
+        /* =========================================
+           BASE
+        ========================================= */
+        html, body {
+            height: 100%;
             overflow: hidden;
         }
 
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 8px;
-            border-radius: 20px 20px 0 0;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text-1);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .arabic-panel::before {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        /* =========================================
+           APP SHELL
+        ========================================= */
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .french-panel::before {
-            background: linear-gradient(135deg, #28a745, #20c997);
+        /* =========================================
+           HEADER
+        ========================================= */
+        .header {
+            display: flex;
+            align-items: center;
+            height: 52px;
+            padding: 0 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .header-brand-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-1);
+            letter-spacing: -0.01em;
+        }
+
+        .header-brand-sub {
+            font-size: 0.78rem;
+            color: var(--text-3);
+            font-weight: 400;
+        }
+
+        .header-sep {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .header-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.76rem;
+            font-weight: 500;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-3);
+            transition: all 0.2s ease;
+        }
+
+        .header-status.listening {
+            background: var(--green-bg);
+            border-color: var(--green-border);
+            color: var(--green);
+        }
+
+        .header-status.processing {
+            background: var(--amber-bg);
+            border-color: #fde68a;
+            color: var(--amber);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .header-status.listening .status-dot {
+            opacity: 1;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%       { transform: scale(0.75); opacity: 0.5; }
+        }
+
+        .header-spacer { flex: 1; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* =========================================
+           BUTTONS
+        ========================================= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--text-1);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+            user-select: none;
+            white-space: nowrap;
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        .btn:hover {
+            background: var(--bg);
+            border-color: var(--border-strong);
+        }
+
+        .btn:active {
+            background: var(--border);
+        }
+
+        .btn-icon {
+            padding: 6px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background: var(--red);
+            border-color: var(--red);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            border-color: #b91c1c;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border-color: transparent;
+            color: var(--text-2);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg);
+            border-color: var(--border);
+            color: var(--text-1);
+        }
+
+        /* =========================================
+           MAIN CONTENT AREA
+        ========================================= */
+        .main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panels-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* =========================================
+           PANELS
+        ========================================= */
+        .panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex: 1;
+            min-width: 160px;
+            background: var(--surface);
+        }
+
+        .panel + .panel {
+            border-left: 1px solid var(--border);
+        }
+
+        .panel.hidden {
+            display: none;
         }
 
         .panel-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            height: 42px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            background: var(--surface-raised);
         }
 
-        .panel-title {
-            font-size: 2.2em;
-            font-weight: 700;
-            margin-bottom: 5px;
+        .panel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .arabic-panel .panel-title {
-            color: #1e3c72;
+        .panel-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-2);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
-        .french-panel .panel-title {
-            color: #28a745;
-        }
-
-        .panel-subtitle {
-            font-size: 1.1em;
-            color: #6c757d;
+        .panel-tag {
+            font-size: 0.68rem;
             font-weight: 500;
+            padding: 2px 7px;
+            border-radius: 100px;
         }
 
+        .tag-arabic {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .tag-french {
+            background: var(--green-bg);
+            color: var(--green);
+            border: 1px solid var(--green-border);
+        }
+
+        .panel-controls {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* content area — moveable between panel and floating window */
         .content-area {
-            min-height: 400px;
-            max-height: 500px;
+            flex: 1;
             overflow-y: auto;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            line-height: 1.8;
-            border: 2px solid #e9ecef;
+            padding: 16px 18px;
+            scroll-behavior: smooth;
         }
 
-        /* Scrollbar personnalisée */
         .content-area::-webkit-scrollbar {
-            width: 12px;
+            width: 5px;
         }
 
         .content-area::-webkit-scrollbar-track {
-            background: #e9ecef;
-            border-radius: 6px;
+            background: transparent;
         }
 
         .content-area::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #6c757d, #495057);
-            border-radius: 6px;
+            background: var(--border-strong);
+            border-radius: 3px;
         }
 
-        .arabic-content {
+        .content-area::-webkit-scrollbar-thumb:hover {
+            background: var(--text-3);
+        }
+
+        /* =========================================
+           TEXT DIRECTION & SIZE
+        ========================================= */
+        .arabic-text {
             direction: rtl;
-            font-family: 'Arial Unicode MS', 'Tahoma', 'Noto Sans Arabic', sans-serif;
-            font-size: 1.6em;
+            font-family: 'Noto Naskh Arabic', 'Scheherazade New', 'Traditional Arabic',
+                         'Arial Unicode MS', 'Tahoma', sans-serif;
+            font-size: var(--arabic-size);
+            text-align: right;
+            line-height: 2;
+        }
+
+        .french-text {
+            direction: ltr;
+            font-size: var(--french-size);
+            line-height: 1.8;
+        }
+
+        /* =========================================
+           ENTRIES
+        ========================================= */
+        .entry {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .entry:last-of-type {
+            border-bottom: none;
+        }
+
+        .entry-time {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-3);
+            font-variant-numeric: tabular-nums;
+            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
+            margin-bottom: 3px;
+        }
+
+        .arabic-text .entry-time {
             text-align: right;
         }
 
-        .french-content {
-            direction: ltr;
-            font-family: 'Segoe UI', 'Roboto', 'Open Sans', sans-serif;
-            font-size: 1.5em;
-            text-align: left;
+        .entry-body {
+            color: var(--text-1);
         }
 
-        .interim-text {
-            color: #6c757d;
+        .entry-interim {
+            color: var(--text-3);
             font-style: italic;
-            opacity: 0.8;
-            animation: blink 1.5s infinite;
         }
 
-        @keyframes blink {
-            0%, 50% { opacity: 0.8; }
-            51%, 100% { opacity: 0.4; }
+        .entry-interim .entry-body {
+            color: var(--text-3);
+            animation: fade-pulse 1.5s ease-in-out infinite;
         }
 
-        .final-text {
-            color: #212529;
-            margin-bottom: 20px;
-            padding: 15px 0;
-            border-bottom: 1px solid #dee2e6;
-            font-weight: 500;
+        @keyframes fade-pulse {
+            0%, 100% { opacity: 0.8; }
+            50%       { opacity: 0.35; }
         }
 
-        .timestamp {
-            font-size: 0.7em;
-            color: #adb5bd;
-            font-weight: normal;
-            float: right;
-            margin-left: 15px;
-            background: #e9ecef;
-            padding: 3px 8px;
-            border-radius: 10px;
-        }
-
-        .arabic-content .timestamp {
-            float: left;
-            margin-right: 15px;
-            margin-left: 0;
-        }
-
+        /* =========================================
+           EMPTY STATE
+        ========================================= */
         .empty-state {
-            text-align: center;
-            color: #6c757d;
-            padding: 80px 20px;
-            font-size: 1.3em;
-        }
-
-        .empty-state-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            opacity: 0.6;
-        }
-
-        .footer {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px 30px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            justify-content: center;
+            height: 100%;
+            min-height: 180px;
+            gap: 10px;
+            color: var(--text-3);
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 36px;
+            height: 36px;
+            opacity: 0.25;
+        }
+
+        .empty-text {
+            font-size: 0.82rem;
+        }
+
+        /* =========================================
+           PANEL DIVIDER (resizable)
+        ========================================= */
+        .panel-divider {
+            width: 4px;
+            background: var(--border);
+            cursor: col-resize;
+            flex-shrink: 0;
+            transition: background 0.15s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel-divider:hover,
+        .panel-divider.active {
+            background: var(--blue);
+        }
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 34px;
+            padding: 0 16px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
         }
 
         .stats {
             display: flex;
-            gap: 40px;
             align-items: center;
+            gap: 18px;
         }
 
         .stat {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.73rem;
+            color: var(--text-3);
         }
 
-        .stat-number {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #1e3c72;
+        .stat-val {
+            font-weight: 600;
+            color: var(--text-2);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .footer-label {
+            font-size: 0.7rem;
+            color: var(--text-3);
+        }
+
+        /* =========================================
+           FLOATING PANELS
+        ========================================= */
+        .floating {
+            position: fixed;
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            z-index: 400;
+            min-width: 260px;
+            min-height: 180px;
+        }
+
+        .floating[hidden] {
+            display: none;
+        }
+
+        .floating-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            cursor: move;
+            user-select: none;
+            flex-shrink: 0;
+            background: var(--surface-raised);
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        .floating-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-2);
+            letter-spacing: 0.02em;
+        }
+
+        .floating-actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        /* The content-area inside the floating panel */
+        .floating .content-area {
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+
+        /* Resize handle */
+        .resize-grip {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            cursor: se-resize;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .floating:hover .resize-grip {
+            opacity: 0.5;
+        }
+
+        .resize-grip:hover {
+            opacity: 0.9 !important;
+        }
+
+        /* =========================================
+           SETTINGS DRAWER
+        ========================================= */
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 800;
+            display: none;
+        }
+
+        .settings-overlay.open {
             display: block;
         }
 
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+        .settings-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(1px);
         }
 
-        .mosque-info {
-            color: #6c757d;
-            font-size: 1.1em;
+        .settings-drawer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 300px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.22s ease;
+        }
+
+        .settings-overlay.open .settings-drawer {
+            transform: translateX(0);
+        }
+
+        .settings-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            height: 52px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .settings-head-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-1);
+        }
+
+        .settings-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .settings-section {
+            padding: 12px 16px 4px;
+        }
+
+        .settings-section-label {
+            font-size: 0.67rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-3);
+            margin-bottom: 8px;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--bg);
+            gap: 12px;
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .settings-row-label {
+            font-size: 0.82rem;
+            color: var(--text-1);
             font-weight: 500;
         }
 
-        .error, .info {
+        .settings-row-desc {
+            font-size: 0.72rem;
+            color: var(--text-3);
+            margin-top: 1px;
+        }
+
+        /* Range slider container */
+        .range-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--bg);
+        }
+
+        .range-row:last-child {
+            border-bottom: none;
+        }
+
+        .range-row-label {
+            font-size: 0.82rem;
+            color: var(--text-1);
+            font-weight: 500;
+        }
+
+        .range-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-val {
+            font-size: 0.72rem;
+            color: var(--text-3);
+            font-variant-numeric: tabular-nums;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 3px;
+            background: var(--border-strong);
+            border-radius: 2px;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--surface);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        /* =========================================
+           TOGGLE SWITCH
+        ========================================= */
+        .toggle {
+            position: relative;
+            width: 34px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--border-strong);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            pointer-events: none;
+        }
+
+        .toggle input:checked ~ .toggle-track {
+            background: var(--accent);
+        }
+
+        .toggle input:checked ~ .toggle-thumb {
+            transform: translateX(16px);
+        }
+
+        /* =========================================
+           TOAST NOTIFICATION
+        ========================================= */
+        .toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
+            bottom: 44px;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            padding: 7px 14px;
+            border-radius: var(--radius-md);
+            background: var(--text-1);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 500;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s, transform 0.18s;
+            white-space: nowrap;
+            box-shadow: var(--shadow-md);
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
-        .error {
-            background: linear-gradient(135deg, #dc3545, #c82333);
+        .toast.error {
+            background: var(--red);
         }
 
-        .info {
-            background: linear-gradient(135deg, #17a2b8, #138496);
+        /* =========================================
+           SVG ICONS (utility)
+        ========================================= */
+        .icon {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            display: block;
         }
 
-        /* Responsive pour grands écrans */
-        @media (min-width: 1920px) {
-            .header h1 { font-size: 3.5em; }
-            .header p { font-size: 1.6em; }
-            .panel-title { font-size: 2.6em; }
-            .arabic-content { font-size: 1.8em; }
-            .french-content { font-size: 1.7em; }
-            .content-area { min-height: 500px; max-height: 600px; }
+        .icon-sm {
+            width: 12px;
+            height: 12px;
         }
 
-        /* Mode plein écran pour TV */
-        @media (min-width: 3840px) {
-            .header h1 { font-size: 4.5em; }
-            .header p { font-size: 2em; }
-            .panel-title { font-size: 3.2em; }
-            .arabic-content { font-size: 2.2em; }
-            .french-content { font-size: 2em; }
-            .content-area { min-height: 600px; max-height: 800px; }
-        }
+        /* =========================================
+           UTILITIES
+        ========================================= */
+        [hidden] { display: none !important; }
 
-        /* Masquer les éléments non essentiels sur grande TV */
-        @media (min-width: 1920px) {
-            .controls {
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 15px;
-                padding: 15px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                z-index: 100;
-                opacity: 0.7;
-                transition: opacity 0.3s ease;
-            }
-
-            .controls:hover {
-                opacity: 1;
-            }
-
-            .btn {
-                min-width: 120px;
-                padding: 10px 20px;
-                font-size: 0.9em;
-            }
-
-            .main-content {
-                padding-top: 20px;
-                min-height: calc(100vh - 200px);
-            }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🕌 ترجمة فورية - Traduction en Temps Réel</h1>
-            <p>خطبة الجمعة مع الترجمة الفرنسية - Prêche avec traduction française</p>
+<div class="app">
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="header">
+        <div class="header-brand">
+            <span class="header-brand-name">Traduction du Prêche</span>
+            <span class="header-brand-sub">خطبة الجمعة</span>
         </div>
 
-        <div class="controls">
+        <div class="header-sep"></div>
+
+        <div id="statusBadge" class="header-status">
+            <span class="status-dot"></span>
+            <span id="statusText">Inactif</span>
+        </div>
+
+        <div class="header-spacer"></div>
+
+        <div class="header-actions">
             <button id="startBtn" class="btn btn-primary">
-                🎙️ Commencer
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <circle cx="7" cy="7" r="5.5"/>
+                    <circle cx="7" cy="7" r="2" fill="currentColor" stroke="none"/>
+                </svg>
+                Démarrer
             </button>
-            <button id="stopBtn" class="btn btn-danger" style="display: none;">
-                ⏹️ Arrêter
+            <button id="stopBtn" class="btn btn-danger" hidden>
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor" stroke="none"/>
+                </svg>
+                Arrêter
             </button>
-            <button id="clearBtn" class="btn btn-secondary">
-                🗑️ Effacer
+            <button id="clearBtn" class="btn">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2.5 3.5h9M5.5 3.5v-1h3v1M4.5 3.5l.5 8h4l.5-8"/>
+                </svg>
+                Effacer
+            </button>
+            <div class="header-sep"></div>
+            <button id="settingsBtn" class="btn btn-ghost btn-icon" title="Paramètres (P)">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+                    <circle cx="7" cy="7" r="2"/>
+                    <path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.93 2.93l1.06 1.06M10.01 10.01l1.06 1.06M2.93 11.07l1.06-1.06M10.01 3.99l1.06-1.06"/>
+                </svg>
             </button>
         </div>
+    </header>
 
-        <div id="status" class="status status-idle">
-            🔇 Cliquez sur "Commencer" pour démarrer la traduction
-        </div>
+    <!-- ===================== MAIN ===================== -->
+    <main class="main">
+        <div class="panels-container" id="panelsContainer">
 
-        <div id="error" class="error" style="display: none;"></div>
-        <div id="info" class="info" style="display: none;"></div>
-
-        <div class="main-content">
-            <div class="panel arabic-panel">
+            <!-- ARABIC PANEL -->
+            <div class="panel" id="arabicPanel">
                 <div class="panel-header">
-                    <div class="panel-title">النص العربي</div>
-                    <div class="panel-subtitle">الخطبة باللغة العربية</div>
+                    <div class="panel-header-left">
+                        <span class="panel-label">Arabe</span>
+                        <span class="panel-tag tag-arabic">ar</span>
+                    </div>
+                    <div class="panel-controls">
+                        <button class="btn btn-ghost btn-icon" id="detachArabic" title="Détacher en fenêtre flottante">
+                            <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8M9 1h4v4M13 1L7 7"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="content-area arabic-content" id="arabicContent">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🎙️</div>
-                        <div>بدء الاستماع لعرض النص هنا</div>
+                <!-- This content-area is moved when panel is detached -->
+                <div class="content-area arabic-text" id="arabicContent">
+                    <div class="empty-state" id="arabicEmpty">
+                        <svg class="empty-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
+                            <circle cx="18" cy="18" r="14"/>
+                            <path d="M12 18c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6"/>
+                            <circle cx="18" cy="18" r="2.5" fill="currentColor" stroke="none"/>
+                        </svg>
+                        <span class="empty-text">بدء الاستماع لعرض النص هنا</span>
                     </div>
                 </div>
             </div>
 
-            <div class="panel french-panel">
+            <!-- DIVIDER -->
+            <div class="panel-divider" id="panelDivider"></div>
+
+            <!-- FRENCH PANEL -->
+            <div class="panel" id="frenchPanel">
                 <div class="panel-header">
-                    <div class="panel-title">Traduction Française</div>
-                    <div class="panel-subtitle">Prêche traduit en français</div>
+                    <div class="panel-header-left">
+                        <span class="panel-label">Traduction</span>
+                        <span class="panel-tag tag-french">fr</span>
+                    </div>
+                    <div class="panel-controls">
+                        <button class="btn btn-ghost btn-icon" id="detachFrench" title="Détacher en fenêtre flottante">
+                            <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8M9 1h4v4M13 1L7 7"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="content-area french-content" id="frenchContent">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🔄</div>
-                        <div>La traduction française apparaîtra ici en temps réel</div>
+                <div class="content-area french-text" id="frenchContent">
+                    <div class="empty-state" id="frenchEmpty">
+                        <svg class="empty-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
+                            <rect x="6" y="10" width="24" height="3" rx="1.5"/>
+                            <rect x="6" y="16" width="18" height="3" rx="1.5"/>
+                            <rect x="6" y="22" width="21" height="3" rx="1.5"/>
+                        </svg>
+                        <span class="empty-text">La traduction apparaîtra ici en temps réel</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="footer">
-            <div class="stats">
-                <div class="stat">
-                    <span class="stat-number" id="totalSentences">0</span>
-                    <span class="stat-label">Phrases</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number" id="totalWords">0</span>
-                    <span class="stat-label">Mots</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number" id="sessionTime">00:00</span>
-                    <span class="stat-label">Durée</span>
-                </div>
+        </div>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-val" id="totalSentences">0</span>
+                <span>phrases</span>
             </div>
-            <div class="mosque-info">
-                Système de traduction automatique - جهاز الترجمة الآلية
+            <div class="stat">
+                <span class="stat-val" id="totalWords">0</span>
+                <span>mots</span>
             </div>
+            <div class="stat">
+                <span class="stat-val" id="sessionTime">00:00</span>
+                <span>durée</span>
+            </div>
+        </div>
+        <span class="footer-label">Système de traduction automatique</span>
+    </footer>
+
+</div><!-- .app -->
+
+
+<!-- ===================== FLOATING ARABIC ===================== -->
+<div class="floating" id="floatingArabic" hidden style="top:80px; left:20px; width:400px; height:320px;">
+    <div class="floating-header" id="floatingArabicHandle">
+        <span class="floating-title">Arabe — النص العربي</span>
+        <div class="floating-actions">
+            <button class="btn btn-ghost btn-icon" id="dockArabic" title="Réancrer dans la fenêtre principale">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 12H11.5A1.5 1.5 0 0013 10.5v-8A1.5 1.5 0 0011.5 1h-8A1.5 1.5 0 002 2.5V6M1 9h6M4 6l-3 3 3 3"/>
+                </svg>
+            </button>
+            <button class="btn btn-ghost btn-icon" id="closeFloatingArabic" title="Fermer">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <path d="M2 2l10 10M12 2L2 12"/>
+                </svg>
+            </button>
         </div>
     </div>
+    <!-- arabicContent div will be moved here when detached -->
+    <div class="floating-body" id="floatingArabicBody"></div>
+    <svg class="resize-grip" id="resizeGripArabic" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+        <path d="M9 15l6-6M13 15l2-2"/>
+    </svg>
+</div>
 
-    <script>
-        console.log("Script chargé - Système de traduction mosquée");
 
-        class MosqueTranscriber {
-            constructor() {
-                console.log("Initialisation du système de traduction");
-                this.recognition = null;
-                this.isListening = false;
-                this.sessionStartTime = null;
-                this.sessionTimer = null;
-                this.totalSentences = 0;
-                this.totalWords = 0;
-                this.currentInterimText = '';
-                
-                this.initializeElements();
-                this.initializeSpeechRecognition();
-                this.bindEvents();
-                this.autoHideControls();
-            }
+<!-- ===================== FLOATING FRENCH ===================== -->
+<div class="floating" id="floatingFrench" hidden style="top:80px; right:20px; width:400px; height:320px;">
+    <div class="floating-header" id="floatingFrenchHandle">
+        <span class="floating-title">Traduction française</span>
+        <div class="floating-actions">
+            <button class="btn btn-ghost btn-icon" id="dockFrench" title="Réancrer dans la fenêtre principale">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 12H11.5A1.5 1.5 0 0013 10.5v-8A1.5 1.5 0 0011.5 1h-8A1.5 1.5 0 002 2.5V6M1 9h6M4 6l-3 3 3 3"/>
+                </svg>
+            </button>
+            <button class="btn btn-ghost btn-icon" id="closeFloatingFrench" title="Fermer">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <path d="M2 2l10 10M12 2L2 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <!-- frenchContent div will be moved here when detached -->
+    <div class="floating-body" id="floatingFrenchBody"></div>
+    <svg class="resize-grip" id="resizeGripFrench" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+        <path d="M9 15l6-6M13 15l2-2"/>
+    </svg>
+</div>
 
-            initializeElements() {
-                this.startBtn = document.getElementById('startBtn');
-                this.stopBtn = document.getElementById('stopBtn');
-                this.clearBtn = document.getElementById('clearBtn');
-                this.status = document.getElementById('status');
-                this.arabicContent = document.getElementById('arabicContent');
-                this.frenchContent = document.getElementById('frenchContent');
-                this.errorDiv = document.getElementById('error');
-                this.infoDiv = document.getElementById('info');
-                
-                // Stats
-                this.totalSentencesSpan = document.getElementById('totalSentences');
-                this.totalWordsSpan = document.getElementById('totalWords');
-                this.sessionTimeSpan = document.getElementById('sessionTime');
-            }
 
-            autoHideControls() {
-                // Masquer automatiquement les contrôles après 10 secondes
-                setTimeout(() => {
-                    if (window.innerWidth >= 1920) {
-                        const controls = document.querySelector('.controls');
-                        if (controls && !this.isListening) {
-                            controls.style.opacity = '0.3';
-                        }
-                    }
-                }, 10000);
-            }
+<!-- ===================== SETTINGS DRAWER ===================== -->
+<div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-backdrop" id="settingsBackdrop"></div>
+    <div class="settings-drawer">
+        <div class="settings-head">
+            <span class="settings-head-title">Paramètres</span>
+            <button class="btn btn-ghost btn-icon" id="closeSettings">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <path d="M2 2l10 10M12 2L2 12"/>
+                </svg>
+            </button>
+        </div>
 
-            initializeSpeechRecognition() {
-                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                    this.showError('❌ Reconnaissance vocale non supportée. Utilisez Chrome ou Edge.');
-                    return;
-                }
+        <div class="settings-body">
 
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                this.recognition = new SpeechRecognition();
-                
-                this.recognition.continuous = true;
-                this.recognition.interimResults = true;
-                this.recognition.lang = 'ar-SA'; // Arabe standard pour mosquée
-                this.recognition.maxAlternatives = 1;
+            <div class="settings-section">
+                <div class="settings-section-label">Affichage</div>
 
-                this.recognition.onstart = () => {
-                    this.isListening = true;
-                    this.updateStatus('🔴 Écoute active - Traduction en cours', 'listening');
-                    this.showInfo('✅ Système de traduction activé');
-                    this.startSessionTimer();
-                };
-
-                this.recognition.onresult = (event) => {
-                    this.processResults(event);
-                };
-
-                this.recognition.onerror = (event) => {
-                    console.error('Erreur reconnaissance:', event.error);
-                    if (event.error !== 'no-speech') {
-                        this.showError(`❌ ${this.getErrorMessage(event.error)}`);
-                        setTimeout(() => {
-                            if (this.isListening) {
-                                this.restartRecognition();
-                            }
-                        }, 2000);
-                    }
-                };
-
-                this.recognition.onend = () => {
-                    if (this.isListening) {
-                        setTimeout(() => {
-                            if (this.isListening) {
-                                this.restartRecognition();
-                            }
-                        }, 100);
-                    }
-                };
-            }
-
-            restartRecognition() {
-                if (this.recognition && this.isListening) {
-                    try {
-                        this.recognition.start();
-                    } catch (error) {
-                        setTimeout(() => {
-                            if (this.isListening) {
-                                this.restartRecognition();
-                            }
-                        }, 1000);
-                    }
-                }
-            }
-
-            processResults(event) {
-                let interimTranscript = '';
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript;
-                    } else {
-                        interimTranscript += transcript;
-                    }
-                }
-
-                if (interimTranscript.trim()) {
-                    this.updateInterimText(interimTranscript.trim());
-                }
-
-                if (finalTranscript.trim()) {
-                    this.addFinalText(finalTranscript.trim());
-                    this.translateText(finalTranscript.trim());
-                }
-            }
-
-            addFinalText(text) {
-                const timestamp = new Date().toLocaleTimeString('fr-FR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                const arabicDiv = document.createElement('div');
-                arabicDiv.className = 'final-text';
-                arabicDiv.innerHTML = `
-                    <span class="timestamp">${timestamp}</span>
-                    ${text}
-                `;
-                this.arabicContent.appendChild(arabicDiv);
-
-                this.totalSentences++;
-                this.totalWords += text.split(' ').length;
-                this.updateStats();
-
-                // Auto-scroll fluide
-                this.arabicContent.scrollTop = this.arabicContent.scrollHeight;
-
-                this.currentInterimText = '';
-                this.updateInterimDisplay();
-            }
-
-            updateInterimText(text) {
-                this.currentInterimText = text;
-                this.updateInterimDisplay();
-            }
-
-            updateInterimDisplay() {
-                const oldInterim = this.arabicContent.querySelector('.interim-text');
-                if (oldInterim) {
-                    oldInterim.remove();
-                }
-
-                if (this.currentInterimText) {
-                    const interimDiv = document.createElement('div');
-                    interimDiv.className = 'interim-text';
-                    interimDiv.innerHTML = `
-                        <span class="timestamp">جاري...</span>
-                        ${this.currentInterimText} ⏳
-                    `;
-                    this.arabicContent.appendChild(interimDiv);
-                    this.arabicContent.scrollTop = this.arabicContent.scrollHeight;
-                }
-            }
-
-            async translateText(text) {
-                try {
-                    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ar|fr`);
-                    const data = await response.json();
-                    
-                    let translation;
-                    if (data.responseStatus === 200) {
-                        translation = data.responseData.translatedText;
-                    } else {
-                        translation = this.getFallbackTranslation(text);
-                    }
-                    
-                    this.addTranslation(translation);
-                } catch (error) {
-                    this.addTranslation(this.getFallbackTranslation(text));
-                }
-            }
-
-            addTranslation(translation) {
-                const timestamp = new Date().toLocaleTimeString('fr-FR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                const frenchDiv = document.createElement('div');
-                frenchDiv.className = 'final-text';
-                frenchDiv.innerHTML = `
-                    <span class="timestamp">${timestamp}</span>
-                    ${translation}
-                `;
-                this.frenchContent.appendChild(frenchDiv);
-
-                // Auto-scroll fluide
-                this.frenchContent.scrollTop = this.frenchContent.scrollHeight;
-            }
-
-            getFallbackTranslation(text) {
-                const religiousTerms = {
-                    'السلام عليكم': 'Que la paix soit sur vous',
-                    'ورحمة الله وبركاته': 'et la miséricorde d\'Allah et ses bénédictions',
-                    'الحمد لله': 'Louange à Allah',
-                    'بسم الله الرحمن الرحيم': 'Au nom d\'Allah, le Tout Miséricordieux, le Très Miséricordieux',
-                    'صلى الله عليه وسلم': 'que la paix et la bénédiction d\'Allah soient sur lui',
-                    'رضي الله عنه': 'qu\'Allah soit satisfait de lui',
-                    'أشهد أن لا إله إلا الله': 'J\'atteste qu\'il n\'y a de dieu qu\'Allah',
-                    'أشهد أن محمدا رسول الله': 'J\'atteste que Muhammad est le messager d\'Allah',
-                    'إن الله': 'Certes, Allah',
-                    'قال الله تعالى': 'Allah le Très-Haut a dit',
-                    'قال رسول الله': 'Le Messager d\'Allah a dit',
-                    'في القرآن الكريم': 'dans le noble Coran',
-                    'أيها المؤمنون': 'Ô croyants',
-                    'أيها الناس': 'Ô gens',
-                    'اتقوا الله': 'Craignez Allah',
-                    'رحمكم الله': 'Qu\'Allah vous fasse miséricorde',
-                    'بارك الله فيكم': 'Qu\'Allah vous bénisse',
-                    'جزاكم الله خيرا': 'Qu\'Allah vous récompense en bien',
-                    'والله أعلم': 'Et Allah sait mieux'
-                };
-
-                for (const [arabic, french] of Object.entries(religiousTerms)) {
-                    if (text.includes(arabic)) {
-                        return text.replace(arabic, french);
-                    }
-                }
-                
-                return `[Traduction en cours...] ${text.substring(0, 50)}...`;
-            }
-
-            getErrorMessage(error) {
-                const errorMessages = {
-                    'no-speech': 'Aucune parole détectée',
-                    'audio-capture': 'Impossible d\'accéder au microphone',
-                    'not-allowed': 'Permission microphone refusée',
-                    'network': 'Erreur réseau',
-                    'language-not-supported': 'Langue non supportée'
-                };
-                return errorMessages[error] || `Erreur: ${error}`;
-            }
-
-            updateStats() {
-                if (this.totalSentencesSpan) this.totalSentencesSpan.textContent = this.totalSentences;
-                if (this.totalWordsSpan) this.totalWordsSpan.textContent = this.totalWords;
-            }
-
-            startSessionTimer() {
-                this.sessionStartTime = Date.now();
-                this.sessionTimer = setInterval(() => {
-                    const elapsed = Date.now() - this.sessionStartTime;
-                    const minutes = Math.floor(elapsed / 60000);
-                    const seconds = Math.floor((elapsed % 60000) / 1000);
-                    if (this.sessionTimeSpan) {
-                        this.sessionTimeSpan.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    }
-                }, 1000);
-            }
-
-            stopSessionTimer() {
-                if (this.sessionTimer) {
-                    clearInterval(this.sessionTimer);
-                    this.sessionTimer = null;
-                }
-            }
-
-            bindEvents() {
-                if (this.startBtn) {
-                    this.startBtn.addEventListener('click', () => this.startListening());
-                }
-                
-                if (this.stopBtn) {
-                    this.stopBtn.addEventListener('click', () => this.stopListening());
-                }
-                
-                if (this.clearBtn) {
-                    this.clearBtn.addEventListener('click', () => this.clearContent());
-                }
-            }
-
-            startListening() {
-                if (!this.recognition) {
-                    this.showError('❌ Reconnaissance vocale non disponible');
-                    return;
-                }
-
-                try {
-                    this.recognition.start();
-                    
-                    this.startBtn.style.display = 'none';
-                    this.stopBtn.style.display = 'inline-block';
-                    
-                    this.updateStatus('⚡ Initialisation du système...', 'processing');
-                    this.hideMessages();
-                    
-                    // Effacer le contenu par défaut
-                    this.arabicContent.innerHTML = '';
-                    this.frenchContent.innerHTML = '';
-                    
-                } catch (error) {
-                    this.showError('❌ Impossible de démarrer la reconnaissance vocale');
-                    this.resetButtons();
-                }
-            }
-
-            stopListening() {
-                this.isListening = false;
-                
-                if (this.recognition) {
-                    this.recognition.stop();
-                }
-                
-                this.resetButtons();
-                this.updateStatus('⏸️ Système arrêté', 'idle');
-                this.stopSessionTimer();
-                this.hideMessages();
-            }
-
-            resetButtons() {
-                this.startBtn.style.display = 'inline-block';
-                this.stopBtn.style.display = 'none';
-            }
-
-            clearContent() {
-                this.arabicContent.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🎙️</div>
-                        <div>بدء الاستماع لعرض النص هنا</div>
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Panneau arabe</div>
+                        <div class="settings-row-desc">Afficher le texte original en arabe</div>
                     </div>
-                `;
-                this.frenchContent.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🔄</div>
-                        <div>La traduction française apparaîtra ici en temps réel</div>
+                    <label class="toggle">
+                        <input type="checkbox" id="settingArabicVisible" checked>
+                        <div class="toggle-track"></div>
+                        <div class="toggle-thumb"></div>
+                    </label>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Panneau traduction</div>
+                        <div class="settings-row-desc">Afficher la traduction française</div>
                     </div>
-                `;
-                
-                this.totalSentences = 0;
-                this.totalWords = 0;
-                this.updateStats();
-                
-                this.showInfo('✅ Contenu effacé');
-                setTimeout(() => this.hideMessages(), 2000);
-            }
+                    <label class="toggle">
+                        <input type="checkbox" id="settingFrenchVisible" checked>
+                        <div class="toggle-track"></div>
+                        <div class="toggle-thumb"></div>
+                    </label>
+                </div>
 
-            updateStatus(message, type) {
-                if (this.status) {
-                    this.status.textContent = message;
-                    this.status.className = `status status-${type}`;
-                }
-            }
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Défilement automatique</div>
+                        <div class="settings-row-desc">Suivre le dernier élément ajouté</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="settingAutoScroll" checked>
+                        <div class="toggle-track"></div>
+                        <div class="toggle-thumb"></div>
+                    </label>
+                </div>
 
-            showError(message) {
-                if (this.errorDiv) {
-                    this.errorDiv.textContent = message;
-                    this.errorDiv.style.display = 'block';
-                    setTimeout(() => this.hideMessages(), 5000);
-                }
-                if (this.infoDiv) {
-                    this.infoDiv.style.display = 'none';
-                }
-            }
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Horodatage</div>
+                        <div class="settings-row-desc">Afficher l'heure de chaque entrée</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="settingShowTime" checked>
+                        <div class="toggle-track"></div>
+                        <div class="toggle-thumb"></div>
+                    </label>
+                </div>
+            </div>
 
-            showInfo(message) {
-                if (this.infoDiv) {
-                    this.infoDiv.textContent = message;
-                    this.infoDiv.style.display = 'block';
-                    setTimeout(() => this.hideMessages(), 3000);
-                }
-                if (this.errorDiv) {
-                    this.errorDiv.style.display = 'none';
-                }
-            }
+            <div class="settings-section">
+                <div class="settings-section-label">Traduction</div>
 
-            hideMessages() {
-                if (this.errorDiv) this.errorDiv.style.display = 'none';
-                if (this.infoDiv) this.infoDiv.style.display = 'none';
-            }
+                <div class="settings-row">
+                    <div class="settings-row-info">
+                        <div class="settings-row-label">Traduction en direct</div>
+                        <div class="settings-row-desc">Traduire automatiquement chaque phrase</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="settingLiveTranslation" checked>
+                        <div class="toggle-track"></div>
+                        <div class="toggle-thumb"></div>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-label">Typographie</div>
+
+                <div class="range-row">
+                    <div class="range-row-label">Taille du texte arabe</div>
+                    <div class="range-controls">
+                        <span class="range-val" id="arabicSizeVal">1.5×</span>
+                        <input type="range" id="settingArabicSize" min="0.8" max="3.5" step="0.1" value="1.5">
+                    </div>
+                </div>
+
+                <div class="range-row">
+                    <div class="range-row-label">Taille du texte français</div>
+                    <div class="range-controls">
+                        <span class="range-val" id="frenchSizeVal">1.2×</span>
+                        <input type="range" id="settingFrenchSize" min="0.8" max="3.5" step="0.1" value="1.2">
+                    </div>
+                </div>
+
+            </div>
+
+        </div><!-- .settings-body -->
+    </div><!-- .settings-drawer -->
+</div><!-- .settings-overlay -->
+
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast"></div>
+
+
+<script>
+'use strict';
+
+/* =============================================
+   STATE
+============================================= */
+const state = {
+    isListening:      false,
+    liveTranslation:  true,
+    autoScroll:       true,
+    showTime:         true,
+    arabicVisible:    true,
+    frenchVisible:    true,
+    arabicFloating:   false,
+    frenchFloating:   false,
+    totalSentences:   0,
+    totalWords:       0,
+    sessionStart:     null,
+    sessionTimer:     null,
+    interimArabic:    '',
+};
+
+/* =============================================
+   DOM REFERENCES
+============================================= */
+const el = (id) => document.getElementById(id);
+
+const dom = {
+    startBtn:           el('startBtn'),
+    stopBtn:            el('stopBtn'),
+    clearBtn:           el('clearBtn'),
+    settingsBtn:        el('settingsBtn'),
+    statusBadge:        el('statusBadge'),
+    statusText:         el('statusText'),
+
+    panelsContainer:    el('panelsContainer'),
+    arabicPanel:        el('arabicPanel'),
+    frenchPanel:        el('frenchPanel'),
+    panelDivider:       el('panelDivider'),
+    arabicContent:      el('arabicContent'),
+    frenchContent:      el('frenchContent'),
+    arabicEmpty:        el('arabicEmpty'),
+    frenchEmpty:        el('frenchEmpty'),
+
+    detachArabic:       el('detachArabic'),
+    detachFrench:       el('detachFrench'),
+
+    floatingArabic:     el('floatingArabic'),
+    floatingFrench:     el('floatingFrench'),
+    floatingArabicBody: el('floatingArabicBody'),
+    floatingFrenchBody: el('floatingFrenchBody'),
+    dockArabic:         el('dockArabic'),
+    dockFrench:         el('dockFrench'),
+    closeFloatingArabic: el('closeFloatingArabic'),
+    closeFloatingFrench: el('closeFloatingFrench'),
+
+    settingsOverlay:    el('settingsOverlay'),
+    settingsBackdrop:   el('settingsBackdrop'),
+    closeSettings:      el('closeSettings'),
+
+    settingArabicVisible:    el('settingArabicVisible'),
+    settingFrenchVisible:    el('settingFrenchVisible'),
+    settingAutoScroll:       el('settingAutoScroll'),
+    settingShowTime:         el('settingShowTime'),
+    settingLiveTranslation:  el('settingLiveTranslation'),
+    settingArabicSize:       el('settingArabicSize'),
+    settingFrenchSize:       el('settingFrenchSize'),
+    arabicSizeVal:           el('arabicSizeVal'),
+    frenchSizeVal:           el('frenchSizeVal'),
+
+    totalSentences:     el('totalSentences'),
+    totalWords:         el('totalWords'),
+    sessionTime:        el('sessionTime'),
+    toast:              el('toast'),
+};
+
+/* =============================================
+   TOAST
+============================================= */
+let toastTimer = null;
+
+function showToast(msg, type = '') {
+    dom.toast.textContent = msg;
+    dom.toast.className   = `toast${type ? ' ' + type : ''} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        dom.toast.classList.remove('show');
+    }, type === 'error' ? 5000 : 2500);
+}
+
+/* =============================================
+   STATUS
+============================================= */
+function setStatus(text, mode = '') {
+    dom.statusText.textContent  = text;
+    dom.statusBadge.className   = `header-status${mode ? ' ' + mode : ''}`;
+}
+
+/* =============================================
+   STATS
+============================================= */
+function updateStats() {
+    dom.totalSentences.textContent = state.totalSentences;
+    dom.totalWords.textContent     = state.totalWords;
+}
+
+function startTimer() {
+    state.sessionStart = Date.now();
+    state.sessionTimer = setInterval(() => {
+        const ms = Date.now() - state.sessionStart;
+        const m  = String(Math.floor(ms / 60000)).padStart(2, '0');
+        const s  = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+        dom.sessionTime.textContent = `${m}:${s}`;
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(state.sessionTimer);
+    state.sessionTimer = null;
+}
+
+/* =============================================
+   CONTENT HELPERS
+============================================= */
+function getTimestamp() {
+    return new Date().toLocaleTimeString('fr-FR', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+}
+
+function activeArabicContainer() {
+    return state.arabicFloating ? dom.floatingArabicBody : dom.arabicContent;
+}
+
+function activeFrenchContainer() {
+    return state.frenchFloating ? dom.floatingFrenchBody : dom.frenchContent;
+}
+
+function removeEmpty(container) {
+    const e = container.querySelector('.empty-state');
+    if (e) e.remove();
+}
+
+function createEntry(text, timestamp, isInterim = false) {
+    const wrap = document.createElement('div');
+    wrap.className = `entry${isInterim ? ' entry-interim' : ''}`;
+
+    const time = document.createElement('span');
+    time.className   = 'entry-time';
+    time.textContent = state.showTime ? timestamp : '';
+
+    const body = document.createElement('div');
+    body.className   = 'entry-body';
+    body.textContent = text;
+
+    wrap.appendChild(time);
+    wrap.appendChild(body);
+    return wrap;
+}
+
+function appendEntry(container, entry) {
+    removeEmpty(container);
+    container.appendChild(entry);
+    if (state.autoScroll) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+/* =============================================
+   INTERIM (live Arabic preview)
+============================================= */
+function updateInterim(text) {
+    const containers = [
+        state.arabicFloating ? dom.floatingArabicBody : dom.arabicContent
+    ];
+    containers.forEach(c => {
+        const old = c.querySelector('.entry-interim');
+        if (old) old.remove();
+        if (text) {
+            const e = createEntry(text, '—', true);
+            c.appendChild(e);
+            if (state.autoScroll) c.scrollTop = c.scrollHeight;
+        }
+    });
+}
+
+/* =============================================
+   SPEECH RECOGNITION
+============================================= */
+let recognition = null;
+
+function initSpeech() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        showToast('Reconnaissance vocale non supportée — utilisez Chrome ou Edge', 'error');
+        return false;
+    }
+
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous      = true;
+    recognition.interimResults  = true;
+    recognition.lang            = 'ar-SA';
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+        state.isListening = true;
+        setStatus('Écoute active', 'listening');
+        startTimer();
+    };
+
+    recognition.onresult = (event) => {
+        let interim = '';
+        let final   = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const t = event.results[i][0].transcript;
+            if (event.results[i].isFinal) final += t;
+            else interim += t;
         }
 
-        // Initialiser l'application
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("Initialisation du système de traduction mosquée");
-            window.mosqueTranscriber = new MosqueTranscriber();
-        });
+        if (interim.trim()) updateInterim(interim.trim());
 
-        // Gestion plein écran automatique pour TV
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'F11' || event.key === 'f') {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
-                    document.exitFullscreen();
-                }
-            }
-        });
+        if (final.trim()) {
+            const ts = getTimestamp();
+            // Arabic entry
+            appendEntry(
+                state.arabicFloating ? dom.floatingArabicBody : dom.arabicContent,
+                createEntry(final.trim(), ts)
+            );
+            // Stats
+            state.totalSentences++;
+            state.totalWords += final.trim().split(/\s+/).filter(Boolean).length;
+            updateStats();
+            // Clear interim
+            updateInterim('');
+            // Translation
+            if (state.liveTranslation) translateText(final.trim(), ts);
+        }
+    };
 
-        // Auto-start pour TV (optionnel)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (window.innerWidth >= 1920 && window.mosqueTranscriber) {
-                    // Auto-démarrer après 3 secondes sur grand écran
-                    // window.mosqueTranscriber.startListening();
-                }
-            }, 3000);
-        });
-    </script>
+    recognition.onerror = (event) => {
+        if (event.error !== 'no-speech') {
+            showToast(errorMsg(event.error), 'error');
+            if (state.isListening) setTimeout(restartSpeech, 2000);
+        }
+    };
+
+    recognition.onend = () => {
+        if (state.isListening) setTimeout(restartSpeech, 100);
+    };
+
+    return true;
+}
+
+function restartSpeech() {
+    if (recognition && state.isListening) {
+        try { recognition.start(); }
+        catch (e) { setTimeout(restartSpeech, 1000); }
+    }
+}
+
+function errorMsg(code) {
+    const map = {
+        'audio-capture':       'Impossible d\'accéder au microphone',
+        'not-allowed':         'Permission microphone refusée',
+        'network':             'Erreur réseau',
+        'language-not-supported': 'Langue arabe non supportée',
+    };
+    return map[code] || `Erreur: ${code}`;
+}
+
+/* =============================================
+   TRANSLATION
+============================================= */
+async function translateText(text, timestamp) {
+    try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ar|fr`;
+        const res  = await fetch(url);
+        const data = await res.json();
+        const tr   = data.responseStatus === 200
+            ? data.responseData.translatedText
+            : fallbackTranslate(text);
+        appendEntry(
+            state.frenchFloating ? dom.floatingFrenchBody : dom.frenchContent,
+            createEntry(tr, timestamp)
+        );
+    } catch {
+        appendEntry(
+            state.frenchFloating ? dom.floatingFrenchBody : dom.frenchContent,
+            createEntry(fallbackTranslate(text), timestamp)
+        );
+    }
+}
+
+function fallbackTranslate(text) {
+    const dict = {
+        'السلام عليكم':              'Que la paix soit sur vous',
+        'ورحمة الله وبركاته':        'et la miséricorde d\'Allah et ses bénédictions',
+        'الحمد لله':                 'Louange à Allah',
+        'بسم الله الرحمن الرحيم':   'Au nom d\'Allah, le Tout Miséricordieux',
+        'صلى الله عليه وسلم':       'que la paix et la bénédiction d\'Allah soient sur lui',
+        'رضي الله عنه':             'qu\'Allah soit satisfait de lui',
+        'أشهد أن لا إله إلا الله':  'J\'atteste qu\'il n\'y a de dieu qu\'Allah',
+        'أشهد أن محمدا رسول الله':  'J\'atteste que Muhammad est le messager d\'Allah',
+        'إن الله':                   'Certes, Allah',
+        'قال الله تعالى':            'Allah le Très-Haut a dit',
+        'قال رسول الله':             'Le Messager d\'Allah a dit',
+        'في القرآن الكريم':          'dans le noble Coran',
+        'أيها المؤمنون':             'Ô croyants',
+        'أيها الناس':                'Ô gens',
+        'اتقوا الله':                'Craignez Allah',
+        'رحمكم الله':                'Qu\'Allah vous fasse miséricorde',
+        'بارك الله فيكم':            'Qu\'Allah vous bénisse',
+        'جزاكم الله خيرا':           'Qu\'Allah vous récompense en bien',
+        'والله أعلم':                'Et Allah sait mieux',
+    };
+    for (const [ar, fr] of Object.entries(dict)) {
+        if (text.includes(ar)) return text.replace(ar, fr);
+    }
+    return `[Traduction non disponible] ${text.substring(0, 80)}`;
+}
+
+/* =============================================
+   CONTROLS
+============================================= */
+function startListening() {
+    if (!recognition && !initSpeech()) return;
+    try {
+        recognition.start();
+        dom.startBtn.hidden = true;
+        dom.stopBtn.hidden  = false;
+        setStatus('Initialisation...', 'processing');
+        // Clear content
+        clearForSession();
+    } catch {
+        showToast('Impossible de démarrer la reconnaissance vocale', 'error');
+    }
+}
+
+function stopListening() {
+    state.isListening = false;
+    if (recognition) recognition.stop();
+    dom.startBtn.hidden = false;
+    dom.stopBtn.hidden  = true;
+    setStatus('Arrêté', '');
+    stopTimer();
+}
+
+function clearForSession() {
+    [dom.arabicContent, dom.frenchContent,
+     dom.floatingArabicBody, dom.floatingFrenchBody].forEach(c => {
+        c.innerHTML = '';
+    });
+    dom.arabicContent.appendChild(buildEmpty('بدء الاستماع لعرض النص هنا'));
+    dom.frenchContent.appendChild(buildEmpty('La traduction apparaîtra ici en temps réel'));
+}
+
+function clearContent() {
+    clearForSession();
+    state.totalSentences = 0;
+    state.totalWords     = 0;
+    updateStats();
+    showToast('Contenu effacé');
+}
+
+function buildEmpty(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'empty-state';
+    wrap.innerHTML = `<span class="empty-text">${text}</span>`;
+    return wrap;
+}
+
+/* =============================================
+   SETTINGS
+============================================= */
+function openSettings() {
+    dom.settingsOverlay.classList.add('open');
+}
+function closeSettings() {
+    dom.settingsOverlay.classList.remove('open');
+}
+
+dom.settingsBtn.addEventListener('click', openSettings);
+dom.closeSettings.addEventListener('click', closeSettings);
+dom.settingsBackdrop.addEventListener('click', closeSettings);
+
+dom.settingArabicVisible.addEventListener('change', (e) => {
+    state.arabicVisible = e.target.checked;
+    if (!state.arabicFloating) {
+        dom.arabicPanel.classList.toggle('hidden', !state.arabicVisible);
+        updateDivider();
+    }
+});
+
+dom.settingFrenchVisible.addEventListener('change', (e) => {
+    state.frenchVisible = e.target.checked;
+    if (!state.frenchFloating) {
+        dom.frenchPanel.classList.toggle('hidden', !state.frenchVisible);
+        updateDivider();
+    }
+});
+
+dom.settingAutoScroll.addEventListener('change', (e) => {
+    state.autoScroll = e.target.checked;
+});
+
+dom.settingShowTime.addEventListener('change', (e) => {
+    state.showTime = e.target.checked;
+    // Update existing timestamps visibility
+    document.querySelectorAll('.entry-time').forEach(t => {
+        t.style.display = state.showTime ? '' : 'none';
+    });
+});
+
+dom.settingLiveTranslation.addEventListener('change', (e) => {
+    state.liveTranslation = e.target.checked;
+});
+
+dom.settingArabicSize.addEventListener('input', (e) => {
+    const v = parseFloat(e.target.value);
+    dom.arabicSizeVal.textContent = `${v.toFixed(1)}×`;
+    document.documentElement.style.setProperty('--arabic-size', `${v}rem`);
+});
+
+dom.settingFrenchSize.addEventListener('input', (e) => {
+    const v = parseFloat(e.target.value);
+    dom.frenchSizeVal.textContent = `${v.toFixed(1)}×`;
+    document.documentElement.style.setProperty('--french-size', `${v}rem`);
+});
+
+/* =============================================
+   MAIN CONTROLS EVENTS
+============================================= */
+dom.startBtn.addEventListener('click', startListening);
+dom.stopBtn.addEventListener('click', stopListening);
+dom.clearBtn.addEventListener('click', clearContent);
+
+/* =============================================
+   PANEL DIVIDER (resizable split)
+============================================= */
+function updateDivider() {
+    const arabicHidden = dom.arabicPanel.classList.contains('hidden');
+    const frenchHidden = dom.frenchPanel.classList.contains('hidden');
+    dom.panelDivider.style.display = (arabicHidden || frenchHidden) ? 'none' : '';
+}
+
+let divDragging = false;
+let divStartX   = 0;
+let divAW       = 0;  // arabic panel start width
+
+dom.panelDivider.addEventListener('mousedown', (e) => {
+    divDragging = true;
+    divStartX   = e.clientX;
+    divAW       = dom.arabicPanel.getBoundingClientRect().width;
+    dom.panelDivider.classList.add('active');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!divDragging) return;
+    const dx          = e.clientX - divStartX;
+    const totalW      = dom.panelsContainer.getBoundingClientRect().width - 4; // minus divider
+    const newAW       = Math.max(140, Math.min(totalW - 140, divAW + dx));
+    const newFW       = totalW - newAW;
+    dom.arabicPanel.style.flex = 'none';
+    dom.arabicPanel.style.width = `${newAW}px`;
+    dom.frenchPanel.style.flex = 'none';
+    dom.frenchPanel.style.width = `${newFW}px`;
+});
+
+document.addEventListener('mouseup', () => {
+    if (divDragging) {
+        divDragging = false;
+        dom.panelDivider.classList.remove('active');
+        document.body.style.cursor    = '';
+        document.body.style.userSelect = '';
+    }
+});
+
+/* =============================================
+   DETACH / DOCK PANELS
+   Strategy: move the actual content-area DOM node
+   between the main panel and the floating panel.
+============================================= */
+function detachPanel(which) {
+    const contentEl  = which === 'arabic' ? dom.arabicContent  : dom.frenchContent;
+    const mainPanel  = which === 'arabic' ? dom.arabicPanel    : dom.frenchPanel;
+    const floatEl    = which === 'arabic' ? dom.floatingArabic : dom.floatingFrench;
+    const floatBody  = which === 'arabic' ? dom.floatingArabicBody : dom.floatingFrenchBody;
+
+    // Move content into floating panel
+    floatBody.appendChild(contentEl);
+
+    // Show floating, hide main panel
+    floatEl.removeAttribute('hidden');
+    mainPanel.classList.add('hidden');
+    updateDivider();
+
+    if (which === 'arabic') state.arabicFloating = true;
+    else                    state.frenchFloating = true;
+}
+
+function dockPanel(which) {
+    const contentEl  = which === 'arabic' ? dom.arabicContent  : dom.frenchContent;
+    const mainPanel  = which === 'arabic' ? dom.arabicPanel    : dom.frenchPanel;
+    const floatEl    = which === 'arabic' ? dom.floatingArabic : dom.floatingFrench;
+
+    // Move content back into main panel
+    mainPanel.appendChild(contentEl);
+
+    // Hide floating, restore main panel
+    floatEl.hidden = true;
+    const visible = which === 'arabic' ? state.arabicVisible : state.frenchVisible;
+    if (visible) mainPanel.classList.remove('hidden');
+    updateDivider();
+
+    if (which === 'arabic') state.arabicFloating = false;
+    else                    state.frenchFloating = false;
+}
+
+dom.detachArabic.addEventListener('click', () => detachPanel('arabic'));
+dom.detachFrench.addEventListener('click', () => detachPanel('french'));
+dom.dockArabic.addEventListener('click',   () => dockPanel('arabic'));
+dom.dockFrench.addEventListener('click',   () => dockPanel('french'));
+
+dom.closeFloatingArabic.addEventListener('click', () => {
+    dom.floatingArabic.hidden = true;
+    // Move content back to main (don't reveal panel if user toggled it off)
+    dockPanel('arabic');
+});
+dom.closeFloatingFrench.addEventListener('click', () => {
+    dom.floatingFrench.hidden = true;
+    dockPanel('french');
+});
+
+/* =============================================
+   FLOATING PANELS — DRAG
+============================================= */
+function makeDraggable(floatEl, handleEl) {
+    let dragging = false;
+    let startX, startY, origLeft, origTop;
+
+    handleEl.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.btn')) return;
+        dragging = true;
+        startX   = e.clientX;
+        startY   = e.clientY;
+        const r  = floatEl.getBoundingClientRect();
+        origLeft = r.left;
+        origTop  = r.top;
+        floatEl.style.right = 'auto'; // remove right if set inline
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const dx   = e.clientX - startX;
+        const dy   = e.clientY - startY;
+        const maxX = window.innerWidth  - 60;
+        const maxY = window.innerHeight - 40;
+        floatEl.style.left = `${Math.max(0, Math.min(maxX, origLeft + dx))}px`;
+        floatEl.style.top  = `${Math.max(0, Math.min(maxY, origTop  + dy))}px`;
+    });
+
+    document.addEventListener('mouseup', () => { dragging = false; });
+}
+
+/* =============================================
+   FLOATING PANELS — RESIZE
+============================================= */
+function makeResizable(floatEl, gripEl) {
+    let resizing = false;
+    let startX, startY, startW, startH;
+
+    gripEl.addEventListener('mousedown', (e) => {
+        resizing = true;
+        startX   = e.clientX;
+        startY   = e.clientY;
+        const r  = floatEl.getBoundingClientRect();
+        startW   = r.width;
+        startH   = r.height;
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!resizing) return;
+        floatEl.style.width  = `${Math.max(240, startW + e.clientX - startX)}px`;
+        floatEl.style.height = `${Math.max(160, startH + e.clientY - startY)}px`;
+    });
+
+    document.addEventListener('mouseup', () => { resizing = false; });
+}
+
+makeDraggable(dom.floatingArabic, el('floatingArabicHandle'));
+makeDraggable(dom.floatingFrench, el('floatingFrenchHandle'));
+makeResizable(dom.floatingArabic, el('resizeGripArabic'));
+makeResizable(dom.floatingFrench, el('resizeGripFrench'));
+
+/* =============================================
+   KEYBOARD SHORTCUTS
+============================================= */
+document.addEventListener('keydown', (e) => {
+    // F11 or F — fullscreen
+    if (e.key === 'F11' || (e.key === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey
+            && document.activeElement.tagName !== 'INPUT')) {
+        e.preventDefault();
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    }
+    // P — settings
+    if (e.key === 'p' && !e.ctrlKey && !e.metaKey
+            && document.activeElement.tagName !== 'INPUT') {
+        dom.settingsOverlay.classList.contains('open')
+            ? closeSettings()
+            : openSettings();
+    }
+    // Escape — close settings
+    if (e.key === 'Escape') closeSettings();
+});
+
+/* =============================================
+   INIT
+============================================= */
+initSpeech();
+</script>
 </body>
 </html>

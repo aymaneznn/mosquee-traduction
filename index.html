@@ -8,50 +8,41 @@
         /* =========================================
            RESET & CUSTOM PROPERTIES
         ========================================= */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
         :root {
-            --bg:             #f5f5f5;
-            --surface:        #ffffff;
-            --surface-raised: #fafafa;
-            --border:         #e5e5e5;
-            --border-strong:  #d4d4d4;
-            --text-1:         #171717;
-            --text-2:         #525252;
-            --text-3:         #a3a3a3;
-            --accent:         #171717;
-            --accent-hover:   #404040;
-            --green:          #16a34a;
-            --green-bg:       #f0fdf4;
-            --green-border:   #bbf7d0;
-            --red:            #dc2626;
-            --red-bg:         #fef2f2;
-            --amber:          #d97706;
-            --amber-bg:       #fffbeb;
-            --blue:           #2563eb;
-            --shadow-sm:      0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md:      0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.05);
-            --shadow-lg:      0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
-            --shadow-xl:      0 20px 25px -5px rgba(0,0,0,0.10), 0 10px 10px -5px rgba(0,0,0,0.04);
-            --radius-sm:      5px;
-            --radius-md:      8px;
-            --radius-lg:      12px;
-            --radius-xl:      16px;
-            --arabic-size:    1.5rem;
-            --french-size:    1.2rem;
+            --bg:            #f5f5f5;
+            --surface:       #ffffff;
+            --surface-2:     #fafafa;
+            --border:        #e5e5e5;
+            --border-2:      #d4d4d4;
+            --text-1:        #171717;
+            --text-2:        #525252;
+            --text-3:        #a3a3a3;
+            --accent:        #171717;
+            --accent-h:      #404040;
+            --green:         #16a34a;
+            --green-bg:      #f0fdf4;
+            --green-bd:      #bbf7d0;
+            --red:           #dc2626;
+            --amber:         #d97706;
+            --amber-bg:      #fffbeb;
+            --blue:          #2563eb;
+            --shadow-md:     0 4px 12px rgba(0,0,0,.09);
+            --shadow-lg:     0 8px 24px rgba(0,0,0,.10);
+            --shadow-xl:     0 16px 40px rgba(0,0,0,.12);
+            --r-sm:          5px;
+            --r-md:          8px;
+            --r-lg:          12px;
+            --r-xl:          16px;
+            --arabic-size:   1.55rem;
+            --french-size:   1.2rem;
+            --sub-size:      2rem;
+            --sub-opacity:   0.85;
+            --sub-pos:       bottom;
         }
 
-        /* =========================================
-           BASE
-        ========================================= */
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
+        html, body { height:100%; overflow:hidden; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
@@ -70,7 +61,26 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            transition: background .3s;
         }
+
+        /* TV MODE — body-level class */
+        body.tv .app { background: #0a0a0a; }
+        body.tv .header,
+        body.tv .footer,
+        body.tv .panel-header { display:none !important; }
+        body.tv .main { flex:1; }
+        body.tv .panel { background: #0a0a0a; }
+        body.tv .panel + .panel { border-left-color: #222; }
+        body.tv .panel-divider { background: #222; }
+        body.tv .panel-divider:hover { background: var(--blue); }
+        body.tv .content-area { padding: 32px 40px; }
+        body.tv .flow-text { color: #f5f5f5; }
+        body.tv .sentence { color: #f5f5f5; }
+        body.tv .sentence.old { color: #666; }
+        body.tv .sentence.mid { color: #999; }
+        body.tv .s-interim { color: #555; }
+        body.tv .content-area::-webkit-scrollbar-thumb { background: #333; }
 
         /* =========================================
            HEADER
@@ -83,774 +93,395 @@
             background: var(--surface);
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
-            gap: 12px;
+            gap: 10px;
             z-index: 10;
         }
 
-        .header-brand {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-        }
+        .brand-name { font-size:.9rem; font-weight:600; letter-spacing:-.01em; }
+        .brand-sub  { font-size:.78rem; color:var(--text-3); }
 
-        .header-brand-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-1);
-            letter-spacing: -0.01em;
-        }
+        .h-sep { width:1px; height:18px; background:var(--border); flex-shrink:0; }
+        .h-spacer { flex:1; }
 
-        .header-brand-sub {
-            font-size: 0.78rem;
-            color: var(--text-3);
-            font-weight: 400;
-        }
-
-        .header-sep {
-            width: 1px;
-            height: 18px;
-            background: var(--border);
-            flex-shrink: 0;
-        }
-
-        .header-status {
+        .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 4px 10px;
             border-radius: 100px;
-            font-size: 0.76rem;
+            font-size: .75rem;
             font-weight: 500;
-            background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text-3);
-            transition: all 0.2s ease;
+            background: var(--bg);
+            transition: all .2s;
+            white-space: nowrap;
         }
+        .status-badge.listening  { background:var(--green-bg); border-color:var(--green-bd); color:var(--green); }
+        .status-badge.processing { background:var(--amber-bg); border-color:#fde68a; color:var(--amber); }
 
-        .header-status.listening {
-            background: var(--green-bg);
-            border-color: var(--green-border);
-            color: var(--green);
+        .s-dot {
+            width:6px; height:6px; border-radius:50%;
+            background:currentColor; opacity:.45; transition: opacity .2s;
         }
+        .status-badge.listening .s-dot { opacity:1; animation:pdot 2s ease-in-out infinite; }
+        @keyframes pdot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(.7);opacity:.4} }
 
-        .header-status.processing {
-            background: var(--amber-bg);
-            border-color: #fde68a;
-            color: var(--amber);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            opacity: 0.5;
-            transition: opacity 0.2s;
-        }
-
-        .header-status.listening .status-dot {
-            opacity: 1;
-            animation: pulse-dot 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50%       { transform: scale(0.75); opacity: 0.5; }
-        }
-
-        .header-spacer { flex: 1; }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .h-actions { display:flex; align-items:center; gap:6px; }
 
         /* =========================================
            BUTTONS
         ========================================= */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            display: inline-flex; align-items:center; justify-content:center; gap:6px;
             padding: 6px 12px;
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            border-radius: var(--r-sm);
             background: var(--surface);
             color: var(--text-1);
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
-            user-select: none;
-            white-space: nowrap;
-            text-decoration: none;
+            font-size: .8rem; font-weight:500;
+            cursor:pointer; user-select:none; white-space:nowrap;
+            transition: background .12s, border-color .12s;
             line-height: 1;
         }
-
-        .btn:hover {
-            background: var(--bg);
-            border-color: var(--border-strong);
-        }
-
-        .btn:active {
-            background: var(--border);
-        }
-
-        .btn-icon {
-            padding: 6px;
-            width: 30px;
-            height: 30px;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            border-color: var(--accent-hover);
-        }
-
-        .btn-danger {
-            background: var(--red);
-            border-color: var(--red);
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-            border-color: #b91c1c;
-        }
-
-        .btn-ghost {
-            background: transparent;
-            border-color: transparent;
-            color: var(--text-2);
-        }
-
-        .btn-ghost:hover {
-            background: var(--bg);
-            border-color: var(--border);
-            color: var(--text-1);
-        }
+        .btn:hover  { background:var(--bg); border-color:var(--border-2); }
+        .btn:active { background:var(--border); }
+        .btn-icon   { padding:6px; width:30px; height:30px; }
+        .btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+        .btn-primary:hover { background:var(--accent-h); border-color:var(--accent-h); }
+        .btn-danger  { background:var(--red); border-color:var(--red); color:#fff; }
+        .btn-danger:hover { background:#b91c1c; border-color:#b91c1c; }
+        .btn-ghost   { background:transparent; border-color:transparent; color:var(--text-2); }
+        .btn-ghost:hover { background:var(--bg); border-color:var(--border); color:var(--text-1); }
+        .btn-tv      { background:#1a1a1a; border-color:#333; color:#ccc; }
+        .btn-tv:hover { background:#262626; }
 
         /* =========================================
-           MAIN CONTENT AREA
+           MAIN & PANELS
         ========================================= */
-        .main {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-        }
+        .main { flex:1; display:flex; overflow:hidden; position:relative; }
 
-        .panels-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
+        .panels-container { flex:1; display:flex; overflow:hidden; }
 
-        /* =========================================
-           PANELS
-        ========================================= */
         .panel {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            flex: 1;
-            min-width: 160px;
-            background: var(--surface);
+            display:flex; flex-direction:column; overflow:hidden;
+            flex:1; min-width:140px; background:var(--surface);
         }
-
-        .panel + .panel {
-            border-left: 1px solid var(--border);
-        }
-
-        .panel.hidden {
-            display: none;
-        }
+        .panel + .panel { border-left:1px solid var(--border); }
+        .panel.hidden { display:none; }
 
         .panel-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 14px;
-            height: 42px;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-            background: var(--surface-raised);
+            display:flex; align-items:center; justify-content:space-between;
+            padding: 0 14px; height:40px;
+            border-bottom:1px solid var(--border);
+            flex-shrink:0; background:var(--surface-2);
         }
+        .ph-left  { display:flex; align-items:center; gap:8px; }
+        .ph-label { font-size:.76rem; font-weight:600; color:var(--text-2); text-transform:uppercase; letter-spacing:.04em; }
+        .ph-tag   { font-size:.66rem; font-weight:500; padding:2px 7px; border-radius:100px; }
+        .tag-ar   { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+        .tag-fr   { background:var(--green-bg); color:var(--green); border:1px solid var(--green-bd); }
+        .ph-ctrl  { display:flex; align-items:center; gap:2px; }
 
-        .panel-header-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .panel-label {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text-2);
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-
-        .panel-tag {
-            font-size: 0.68rem;
-            font-weight: 500;
-            padding: 2px 7px;
-            border-radius: 100px;
-        }
-
-        .tag-arabic {
-            background: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-        }
-
-        .tag-french {
-            background: var(--green-bg);
-            color: var(--green);
-            border: 1px solid var(--green-border);
-        }
-
-        .panel-controls {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-
-        /* content area — moveable between panel and floating window */
+        /* =========================================
+           CONTENT — FLOWING TEXT
+        ========================================= */
         .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 18px;
-            scroll-behavior: smooth;
+            flex:1; overflow-y:auto; padding:20px 22px;
+            scroll-behavior:smooth;
+        }
+        .content-area::-webkit-scrollbar { width:5px; }
+        .content-area::-webkit-scrollbar-track { background:transparent; }
+        .content-area::-webkit-scrollbar-thumb { background:var(--border-2); border-radius:3px; }
+        .content-area::-webkit-scrollbar-thumb:hover { background:var(--text-3); }
+
+        .flow-text {
+            line-height: 1.95;
+            word-spacing: .04em;
         }
 
-        .content-area::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .content-area::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .content-area::-webkit-scrollbar-thumb {
-            background: var(--border-strong);
-            border-radius: 3px;
-        }
-
-        .content-area::-webkit-scrollbar-thumb:hover {
-            background: var(--text-3);
-        }
-
-        /* =========================================
-           TEXT DIRECTION & SIZE
-        ========================================= */
+        /* Arabic */
         .arabic-text {
-            direction: rtl;
-            font-family: 'Noto Naskh Arabic', 'Scheherazade New', 'Traditional Arabic',
-                         'Arial Unicode MS', 'Tahoma', sans-serif;
+            direction:rtl; text-align:right;
+            font-family:'Noto Naskh Arabic','Scheherazade New','Traditional Arabic',
+                         'Arial Unicode MS','Tahoma',sans-serif;
             font-size: var(--arabic-size);
-            text-align: right;
-            line-height: 2;
         }
 
-        .french-text {
-            direction: ltr;
-            font-size: var(--french-size);
-            line-height: 1.8;
-        }
+        /* French */
+        .french-text { direction:ltr; font-size:var(--french-size); }
 
-        /* =========================================
-           ENTRIES
-        ========================================= */
-        .entry {
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .entry:last-of-type {
-            border-bottom: none;
-        }
-
-        .entry-time {
-            display: block;
-            font-size: 0.65rem;
-            color: var(--text-3);
-            font-variant-numeric: tabular-nums;
-            font-family: 'SF Mono', 'Consolas', 'Menlo', monospace;
-            margin-bottom: 3px;
-        }
-
-        .arabic-text .entry-time {
-            text-align: right;
-        }
-
-        .entry-body {
+        /* Sentence spans in flowing mode */
+        .sentence {
             color: var(--text-1);
+            transition: color 1.5s ease, opacity 1.5s ease;
         }
+        .sentence.mid { color: var(--text-2); }
+        .sentence.old { color: var(--text-3); }
 
-        .entry-interim {
+        .s-interim {
             color: var(--text-3);
             font-style: italic;
+            animation: fpulse 1.6s ease-in-out infinite;
         }
+        @keyframes fpulse { 0%,100%{opacity:.75} 50%{opacity:.3} }
 
-        .entry-interim .entry-body {
-            color: var(--text-3);
-            animation: fade-pulse 1.5s ease-in-out infinite;
-        }
+        .s-sep { color:var(--border-2); margin:0 .15em; user-select:none; }
 
-        @keyframes fade-pulse {
-            0%, 100% { opacity: 0.8; }
-            50%       { opacity: 0.35; }
-        }
-
-        /* =========================================
-           EMPTY STATE
-        ========================================= */
+        /* Empty state */
         .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            min-height: 180px;
-            gap: 10px;
-            color: var(--text-3);
-            text-align: center;
+            display:flex; flex-direction:column; align-items:center;
+            justify-content:center; height:100%; min-height:160px;
+            gap:10px; color:var(--text-3); text-align:center;
         }
-
-        .empty-icon {
-            width: 36px;
-            height: 36px;
-            opacity: 0.25;
-        }
-
-        .empty-text {
-            font-size: 0.82rem;
-        }
+        .empty-icon { width:34px; height:34px; opacity:.2; }
+        .empty-text { font-size:.82rem; }
 
         /* =========================================
            PANEL DIVIDER (resizable)
         ========================================= */
         .panel-divider {
-            width: 4px;
-            background: var(--border);
-            cursor: col-resize;
-            flex-shrink: 0;
-            transition: background 0.15s;
-            position: relative;
-            z-index: 1;
+            width:4px; background:var(--border);
+            cursor:col-resize; flex-shrink:0; transition:background .15s;
         }
-
         .panel-divider:hover,
-        .panel-divider.active {
-            background: var(--blue);
-        }
+        .panel-divider.active { background:var(--blue); }
 
         /* =========================================
            FOOTER
         ========================================= */
         .footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 34px;
-            padding: 0 16px;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            flex-shrink: 0;
+            display:flex; align-items:center; justify-content:space-between;
+            height:34px; padding:0 16px;
+            background:var(--surface); border-top:1px solid var(--border);
+            flex-shrink:0;
         }
+        .stats { display:flex; align-items:center; gap:18px; }
+        .stat  { display:flex; align-items:center; gap:4px; font-size:.72rem; color:var(--text-3); }
+        .stat-v { font-weight:600; color:var(--text-2); font-variant-numeric:tabular-nums; }
+        .footer-label { font-size:.69rem; color:var(--text-3); }
 
-        .stats {
-            display: flex;
-            align-items: center;
-            gap: 18px;
+        /* =========================================
+           TV CONTROL BAR (appears on mouse move in TV mode)
+        ========================================= */
+        .tv-bar {
+            position:fixed; top:0; left:0; right:0; z-index:300;
+            display:none; align-items:center; gap:10px;
+            padding:0 20px; height:52px;
+            background:linear-gradient(to bottom,rgba(0,0,0,.7),transparent);
+            opacity:0; transition:opacity .3s;
         }
-
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.73rem;
-            color: var(--text-3);
-        }
-
-        .stat-val {
-            font-weight: 600;
-            color: var(--text-2);
-            font-variant-numeric: tabular-nums;
-        }
-
-        .footer-label {
-            font-size: 0.7rem;
-            color: var(--text-3);
-        }
+        body.tv .tv-bar { display:flex; }
+        .tv-bar.visible  { opacity:1; }
+        .tv-bar-label { font-size:.82rem; color:rgba(255,255,255,.7); flex:1; }
 
         /* =========================================
            FLOATING PANELS
         ========================================= */
         .floating {
-            position: fixed;
-            display: flex;
-            flex-direction: column;
-            background: var(--surface);
-            border: 1px solid var(--border-strong);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            overflow: hidden;
-            z-index: 400;
-            min-width: 260px;
-            min-height: 180px;
+            position:fixed; display:flex; flex-direction:column;
+            background:var(--surface); border:1px solid var(--border-2);
+            border-radius:var(--r-xl); box-shadow:var(--shadow-xl);
+            overflow:hidden; z-index:400; min-width:240px; min-height:160px;
         }
+        .floating[hidden] { display:none; }
 
-        .floating[hidden] {
-            display: none;
+        .float-head {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:10px 14px; border-bottom:1px solid var(--border);
+            cursor:move; user-select:none; flex-shrink:0;
+            background:var(--surface-2);
         }
+        .float-title { font-size:.78rem; font-weight:600; color:var(--text-2); }
+        .float-actions { display:flex; gap:2px; }
 
-        .floating-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--border);
-            cursor: move;
-            user-select: none;
-            flex-shrink: 0;
-            background: var(--surface-raised);
-            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-        }
-
-        .floating-title {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text-2);
-            letter-spacing: 0.02em;
-        }
-
-        .floating-actions {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-        }
-
-        /* The content-area inside the floating panel */
-        .floating .content-area {
-            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-        }
-
-        /* Resize handle */
         .resize-grip {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 18px;
-            height: 18px;
-            cursor: se-resize;
-            opacity: 0;
-            transition: opacity 0.15s;
+            position:absolute; bottom:0; right:0;
+            width:18px; height:18px; cursor:se-resize;
+            opacity:0; transition:opacity .15s;
+        }
+        .floating:hover .resize-grip { opacity:.4; }
+        .resize-grip:hover { opacity:.85 !important; }
+
+        /* =========================================
+           CAMERA MODE OVERLAY
+        ========================================= */
+        #cameraOverlay {
+            position:fixed; inset:0; z-index:600;
+            background:#000; display:flex; flex-direction:column;
+        }
+        #cameraOverlay[hidden] { display:none; }
+
+        #cameraVideo {
+            position:absolute; inset:0; width:100%; height:100%;
+            object-fit:cover; display:block;
         }
 
-        .floating:hover .resize-grip {
-            opacity: 0.5;
+        /* Subtitle bar — bottom by default */
+        #subtitleWrap {
+            position:absolute; left:0; right:0;
+            display:flex; flex-direction:column; align-items:center;
+            gap:6px; padding:18px 8%;
+            transition: top .3s, bottom .3s;
+        }
+        #subtitleWrap.pos-bottom { bottom:0; }
+        #subtitleWrap.pos-top    { top:0; }
+
+        .subtitle-bg {
+            background:rgba(0,0,0,var(--sub-opacity));
+            border-radius:6px; padding:8px 18px;
+            text-align:center; max-width:900px; width:100%;
+            backdrop-filter:blur(4px);
         }
 
-        .resize-grip:hover {
-            opacity: 0.9 !important;
+        #subFrench {
+            color:#fff; font-size:var(--sub-size); font-weight:500;
+            line-height:1.4; transition: opacity .4s;
         }
+
+        #subArabic {
+            color:rgba(255,255,255,.8);
+            font-family:'Noto Naskh Arabic','Tahoma',sans-serif;
+            font-size:calc(var(--sub-size) * .7); direction:rtl;
+            line-height:1.6; transition:opacity .4s;
+        }
+        #subArabic.hidden { display:none; }
+
+        /* Camera control overlay */
+        #camControls {
+            position:absolute; top:0; left:0; right:0; z-index:10;
+            display:flex; align-items:center; gap:10px; padding:14px 20px;
+            background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent);
+            opacity:0; transition:opacity .3s;
+        }
+        #camControls.visible { opacity:1; }
+        .cam-label { font-size:.82rem; color:rgba(255,255,255,.75); flex:1; }
 
         /* =========================================
            SETTINGS DRAWER
         ========================================= */
-        .settings-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 800;
-            display: none;
-        }
-
-        .settings-overlay.open {
-            display: block;
-        }
+        .settings-overlay { position:fixed; inset:0; z-index:800; display:none; }
+        .settings-overlay.open { display:block; }
 
         .settings-backdrop {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.25);
-            backdrop-filter: blur(1px);
+            position:absolute; inset:0;
+            background:rgba(0,0,0,.22); backdrop-filter:blur(1px);
         }
 
         .settings-drawer {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 300px;
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            flex-direction: column;
-            transform: translateX(100%);
-            transition: transform 0.22s ease;
+            position:absolute; top:0; right:0; bottom:0; width:320px;
+            background:var(--surface); border-left:1px solid var(--border);
+            box-shadow:var(--shadow-xl); display:flex; flex-direction:column;
+            transform:translateX(100%); transition:transform .22s ease;
+        }
+        .settings-overlay.open .settings-drawer { transform:translateX(0); }
+
+        .s-head {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:0 16px; height:52px; border-bottom:1px solid var(--border);
+            flex-shrink:0;
+        }
+        .s-head-title { font-size:.88rem; font-weight:600; }
+
+        .s-body { flex:1; overflow-y:auto; padding:4px 0 16px; }
+        .s-body::-webkit-scrollbar { width:4px; }
+        .s-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+        .s-section { padding:14px 16px 6px; }
+        .s-section-label {
+            font-size:.66rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:.1em; color:var(--text-3); margin-bottom:10px;
         }
 
-        .settings-overlay.open .settings-drawer {
-            transform: translateX(0);
+        .s-row {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:8px 0; border-bottom:1px solid var(--bg); gap:12px;
         }
+        .s-row:last-child { border-bottom:none; }
+        .s-row-info { flex:1; min-width:0; }
+        .s-row-label { font-size:.82rem; color:var(--text-1); font-weight:500; }
+        .s-row-desc  { font-size:.72rem; color:var(--text-3); margin-top:1px; }
 
-        .settings-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            height: 52px;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
+        .s-range-row { display:flex; flex-direction:column; gap:8px; padding:8px 0; border-bottom:1px solid var(--bg); }
+        .s-range-row:last-child { border-bottom:none; }
+        .s-range-label { font-size:.82rem; color:var(--text-1); font-weight:500; }
+        .s-range-ctrl  { display:flex; align-items:center; gap:10px; }
+        .s-range-val   { font-size:.72rem; color:var(--text-3); min-width:34px; text-align:right; font-variant-numeric:tabular-nums; }
 
-        .settings-head-title {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: var(--text-1);
+        /* Camera select */
+        .s-select {
+            width:100%; padding:6px 8px; margin-top:6px;
+            border:1px solid var(--border); border-radius:var(--r-sm);
+            background:var(--bg); color:var(--text-1); font-size:.8rem;
+            cursor:pointer; outline:none;
         }
-
-        .settings-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 0;
-        }
-
-        .settings-section {
-            padding: 12px 16px 4px;
-        }
-
-        .settings-section-label {
-            font-size: 0.67rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-3);
-            margin-bottom: 8px;
-        }
-
-        .settings-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--bg);
-            gap: 12px;
-        }
-
-        .settings-row:last-child {
-            border-bottom: none;
-        }
-
-        .settings-row-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .settings-row-label {
-            font-size: 0.82rem;
-            color: var(--text-1);
-            font-weight: 500;
-        }
-
-        .settings-row-desc {
-            font-size: 0.72rem;
-            color: var(--text-3);
-            margin-top: 1px;
-        }
-
-        /* Range slider container */
-        .range-row {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--bg);
-        }
-
-        .range-row:last-child {
-            border-bottom: none;
-        }
-
-        .range-row-label {
-            font-size: 0.82rem;
-            color: var(--text-1);
-            font-weight: 500;
-        }
-
-        .range-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .range-val {
-            font-size: 0.72rem;
-            color: var(--text-3);
-            font-variant-numeric: tabular-nums;
-            min-width: 30px;
-            text-align: right;
-        }
+        .s-select:focus { border-color:var(--border-2); }
 
         input[type="range"] {
-            flex: 1;
-            height: 3px;
-            background: var(--border-strong);
-            border-radius: 2px;
-            appearance: none;
-            outline: none;
-            cursor: pointer;
+            flex:1; height:3px; background:var(--border-2);
+            border-radius:2px; appearance:none; outline:none; cursor:pointer;
         }
-
         input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--accent);
-            border: 2px solid var(--surface);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            cursor: pointer;
+            appearance:none; width:14px; height:14px; border-radius:50%;
+            background:var(--accent); border:2px solid var(--surface);
+            box-shadow:0 1px 3px rgba(0,0,0,.2); cursor:pointer;
         }
 
         /* =========================================
            TOGGLE SWITCH
         ========================================= */
-        .toggle {
-            position: relative;
-            width: 34px;
-            height: 18px;
-            flex-shrink: 0;
+        .toggle { position:relative; width:34px; height:18px; flex-shrink:0; }
+        .toggle input { opacity:0; width:0; height:0; position:absolute; }
+        .t-track {
+            position:absolute; inset:0; background:var(--border-2);
+            border-radius:100px; cursor:pointer; transition:background .2s;
         }
-
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-            position: absolute;
+        .t-thumb {
+            position:absolute; top:2px; left:2px; width:14px; height:14px;
+            background:white; border-radius:50%;
+            box-shadow:0 1px 3px rgba(0,0,0,.2);
+            transition:transform .2s; pointer-events:none;
         }
-
-        .toggle-track {
-            position: absolute;
-            inset: 0;
-            background: var(--border-strong);
-            border-radius: 100px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .toggle-thumb {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 14px;
-            height: 14px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-            pointer-events: none;
-        }
-
-        .toggle input:checked ~ .toggle-track {
-            background: var(--accent);
-        }
-
-        .toggle input:checked ~ .toggle-thumb {
-            transform: translateX(16px);
-        }
+        .toggle input:checked ~ .t-track { background:var(--accent); }
+        .toggle input:checked ~ .t-thumb { transform:translateX(16px); }
 
         /* =========================================
-           TOAST NOTIFICATION
+           TOAST
         ========================================= */
         .toast {
-            position: fixed;
-            bottom: 44px;
-            left: 50%;
-            transform: translateX(-50%) translateY(8px);
-            padding: 7px 14px;
-            border-radius: var(--radius-md);
-            background: var(--text-1);
-            color: #fff;
-            font-size: 0.78rem;
-            font-weight: 500;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.18s, transform 0.18s;
-            white-space: nowrap;
-            box-shadow: var(--shadow-md);
+            position:fixed; bottom:44px; left:50%;
+            transform:translateX(-50%) translateY(8px);
+            padding:7px 14px; border-radius:var(--r-md);
+            background:var(--text-1); color:#fff;
+            font-size:.78rem; font-weight:500; z-index:1000;
+            opacity:0; pointer-events:none;
+            transition:opacity .18s, transform .18s; white-space:nowrap;
         }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .toast.error {
-            background: var(--red);
-        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .toast.err  { background:var(--red); }
 
         /* =========================================
-           SVG ICONS (utility)
+           SVG ICONS
         ========================================= */
-        .icon {
-            width: 14px;
-            height: 14px;
-            flex-shrink: 0;
-            display: block;
-        }
+        .icon { width:14px; height:14px; flex-shrink:0; display:block; }
 
-        .icon-sm {
-            width: 12px;
-            height: 12px;
-        }
-
-        /* =========================================
-           UTILITIES
-        ========================================= */
-        [hidden] { display: none !important; }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            clip: rect(0,0,0,0);
-        }
+        [hidden] { display:none !important; }
     </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
 
-    <!-- ===================== HEADER ===================== -->
+    <!-- ========== HEADER ========== -->
     <header class="header">
-        <div class="header-brand">
-            <span class="header-brand-name">Traduction du Prêche</span>
-            <span class="header-brand-sub">خطبة الجمعة</span>
-        </div>
-
-        <div class="header-sep"></div>
-
-        <div id="statusBadge" class="header-status">
-            <span class="status-dot"></span>
+        <span class="brand-name">Traduction du Prêche</span>
+        <span class="brand-sub">خطبة الجمعة</span>
+        <div class="h-sep"></div>
+        <div id="statusBadge" class="status-badge">
+            <span class="s-dot"></span>
             <span id="statusText">Inactif</span>
         </div>
-
-        <div class="header-spacer"></div>
-
-        <div class="header-actions">
+        <div class="h-spacer"></div>
+        <div class="h-actions">
             <button id="startBtn" class="btn btn-primary">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
                     <circle cx="7" cy="7" r="5.5"/>
@@ -859,8 +490,8 @@
                 Démarrer
             </button>
             <button id="stopBtn" class="btn btn-danger" hidden>
-                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor" stroke="none"/>
+                <svg class="icon" viewBox="0 0 14 14" fill="none">
+                    <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor"/>
                 </svg>
                 Arrêter
             </button>
@@ -870,7 +501,14 @@
                 </svg>
                 Effacer
             </button>
-            <div class="header-sep"></div>
+            <div class="h-sep"></div>
+            <!-- TV mode button -->
+            <button id="tvBtn" class="btn btn-tv btn-icon" title="Mode TV (T)">
+                <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="2.5" width="12" height="8" rx="1.5"/>
+                    <path d="M5 11.5h4M7 10.5v1"/>
+                </svg>
+            </button>
             <button id="settingsBtn" class="btn btn-ghost btn-icon" title="Paramètres (P)">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
                     <circle cx="7" cy="7" r="2"/>
@@ -880,32 +518,32 @@
         </div>
     </header>
 
-    <!-- ===================== MAIN ===================== -->
+    <!-- ========== MAIN ========== -->
     <main class="main">
         <div class="panels-container" id="panelsContainer">
 
             <!-- ARABIC PANEL -->
             <div class="panel" id="arabicPanel">
                 <div class="panel-header">
-                    <div class="panel-header-left">
-                        <span class="panel-label">Arabe</span>
-                        <span class="panel-tag tag-arabic">ar</span>
+                    <div class="ph-left">
+                        <span class="ph-label">Arabe</span>
+                        <span class="ph-tag tag-ar">ar</span>
                     </div>
-                    <div class="panel-controls">
-                        <button class="btn btn-ghost btn-icon" id="detachArabic" title="Détacher en fenêtre flottante">
+                    <div class="ph-ctrl">
+                        <button class="btn btn-ghost btn-icon" id="detachArabic" title="Détacher">
                             <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8M9 1h4v4M13 1L7 7"/>
                             </svg>
                         </button>
                     </div>
                 </div>
-                <!-- This content-area is moved when panel is detached -->
+                <!-- content-area is moved between containers -->
                 <div class="content-area arabic-text" id="arabicContent">
+                    <div class="flow-text" id="arabicFlow"></div>
                     <div class="empty-state" id="arabicEmpty">
-                        <svg class="empty-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
-                            <circle cx="18" cy="18" r="14"/>
-                            <path d="M12 18c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6"/>
-                            <circle cx="18" cy="18" r="2.5" fill="currentColor" stroke="none"/>
+                        <svg class="empty-icon" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1">
+                            <circle cx="17" cy="17" r="13"/>
+                            <circle cx="17" cy="17" r="3" fill="currentColor" stroke="none" opacity=".3"/>
                         </svg>
                         <span class="empty-text">بدء الاستماع لعرض النص هنا</span>
                     </div>
@@ -918,12 +556,12 @@
             <!-- FRENCH PANEL -->
             <div class="panel" id="frenchPanel">
                 <div class="panel-header">
-                    <div class="panel-header-left">
-                        <span class="panel-label">Traduction</span>
-                        <span class="panel-tag tag-french">fr</span>
+                    <div class="ph-left">
+                        <span class="ph-label">Traduction</span>
+                        <span class="ph-tag tag-fr">fr</span>
                     </div>
-                    <div class="panel-controls">
-                        <button class="btn btn-ghost btn-icon" id="detachFrench" title="Détacher en fenêtre flottante">
+                    <div class="ph-ctrl">
+                        <button class="btn btn-ghost btn-icon" id="detachFrench" title="Détacher">
                             <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M6 2H2.5A1.5 1.5 0 001 3.5v8A1.5 1.5 0 002.5 13h8A1.5 1.5 0 0012 11.5V8M9 1h4v4M13 1L7 7"/>
                             </svg>
@@ -931,13 +569,14 @@
                     </div>
                 </div>
                 <div class="content-area french-text" id="frenchContent">
+                    <div class="flow-text" id="frenchFlow"></div>
                     <div class="empty-state" id="frenchEmpty">
-                        <svg class="empty-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1">
-                            <rect x="6" y="10" width="24" height="3" rx="1.5"/>
-                            <rect x="6" y="16" width="18" height="3" rx="1.5"/>
-                            <rect x="6" y="22" width="21" height="3" rx="1.5"/>
+                        <svg class="empty-icon" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1">
+                            <rect x="5" y="9" width="24" height="3" rx="1.5"/>
+                            <rect x="5" y="15" width="18" height="3" rx="1.5"/>
+                            <rect x="5" y="21" width="21" height="3" rx="1.5"/>
                         </svg>
-                        <span class="empty-text">La traduction apparaîtra ici en temps réel</span>
+                        <span class="empty-text">La traduction apparaîtra ici</span>
                     </div>
                 </div>
             </div>
@@ -945,84 +584,112 @@
         </div>
     </main>
 
-    <!-- ===================== FOOTER ===================== -->
+    <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="stats">
-            <div class="stat">
-                <span class="stat-val" id="totalSentences">0</span>
-                <span>phrases</span>
-            </div>
-            <div class="stat">
-                <span class="stat-val" id="totalWords">0</span>
-                <span>mots</span>
-            </div>
-            <div class="stat">
-                <span class="stat-val" id="sessionTime">00:00</span>
-                <span>durée</span>
-            </div>
+            <div class="stat"><span class="stat-v" id="totalSentences">0</span><span>phrases</span></div>
+            <div class="stat"><span class="stat-v" id="totalWords">0</span><span>mots</span></div>
+            <div class="stat"><span class="stat-v" id="sessionTime">00:00</span><span>durée</span></div>
         </div>
         <span class="footer-label">Système de traduction automatique</span>
     </footer>
 
 </div><!-- .app -->
 
+<!-- ========== TV CONTROL BAR ========== -->
+<div class="tv-bar" id="tvBar">
+    <button class="btn btn-ghost" id="tvExitBtn" style="color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.2);">
+        <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 2H11.5A1.5 1.5 0 0113 3.5v7A1.5 1.5 0 0111.5 12H9M1 7h8M5 4l-3 3 3 3"/>
+        </svg>
+        Quitter le mode TV
+    </button>
+    <span class="tv-bar-label" id="tvBarStatus"></span>
+    <button id="tvStartBtn" class="btn" style="background:var(--green);border-color:var(--green);color:#fff;">Démarrer</button>
+    <button id="tvStopBtn"  class="btn btn-danger" hidden>Arrêter</button>
+</div>
 
-<!-- ===================== FLOATING ARABIC ===================== -->
-<div class="floating" id="floatingArabic" hidden style="top:80px; left:20px; width:400px; height:320px;">
-    <div class="floating-header" id="floatingArabicHandle">
-        <span class="floating-title">Arabe — النص العربي</span>
-        <div class="floating-actions">
-            <button class="btn btn-ghost btn-icon" id="dockArabic" title="Réancrer dans la fenêtre principale">
+
+<!-- ========== FLOATING ARABIC ========== -->
+<div class="floating" id="floatingArabic" hidden style="top:80px;left:20px;width:400px;height:320px;">
+    <div class="float-head" id="fArabicHandle">
+        <span class="float-title">Arabe — النص العربي</span>
+        <div class="float-actions">
+            <button class="btn btn-ghost btn-icon" id="dockArabic" title="Réancrer">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 12H11.5A1.5 1.5 0 0013 10.5v-8A1.5 1.5 0 0011.5 1h-8A1.5 1.5 0 002 2.5V6M1 9h6M4 6l-3 3 3 3"/>
                 </svg>
             </button>
-            <button class="btn btn-ghost btn-icon" id="closeFloatingArabic" title="Fermer">
+            <button class="btn btn-ghost btn-icon" id="closeFArabic">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
                     <path d="M2 2l10 10M12 2L2 12"/>
                 </svg>
             </button>
         </div>
     </div>
-    <!-- arabicContent div will be moved here when detached -->
-    <div class="floating-body" id="floatingArabicBody"></div>
-    <svg class="resize-grip" id="resizeGripArabic" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+    <div id="fArabicBody" style="flex:1;overflow:hidden;display:flex;flex-direction:column;"></div>
+    <svg class="resize-grip" id="rgArabic" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
         <path d="M9 15l6-6M13 15l2-2"/>
     </svg>
 </div>
 
 
-<!-- ===================== FLOATING FRENCH ===================== -->
-<div class="floating" id="floatingFrench" hidden style="top:80px; right:20px; width:400px; height:320px;">
-    <div class="floating-header" id="floatingFrenchHandle">
-        <span class="floating-title">Traduction française</span>
-        <div class="floating-actions">
-            <button class="btn btn-ghost btn-icon" id="dockFrench" title="Réancrer dans la fenêtre principale">
+<!-- ========== FLOATING FRENCH ========== -->
+<div class="floating" id="floatingFrench" hidden style="top:80px;right:20px;width:400px;height:320px;">
+    <div class="float-head" id="fFrenchHandle">
+        <span class="float-title">Traduction française</span>
+        <div class="float-actions">
+            <button class="btn btn-ghost btn-icon" id="dockFrench" title="Réancrer">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M8 12H11.5A1.5 1.5 0 0013 10.5v-8A1.5 1.5 0 0011.5 1h-8A1.5 1.5 0 002 2.5V6M1 9h6M4 6l-3 3 3 3"/>
                 </svg>
             </button>
-            <button class="btn btn-ghost btn-icon" id="closeFloatingFrench" title="Fermer">
+            <button class="btn btn-ghost btn-icon" id="closeFfrench">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
                     <path d="M2 2l10 10M12 2L2 12"/>
                 </svg>
             </button>
         </div>
     </div>
-    <!-- frenchContent div will be moved here when detached -->
-    <div class="floating-body" id="floatingFrenchBody"></div>
-    <svg class="resize-grip" id="resizeGripFrench" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+    <div id="fFrenchBody" style="flex:1;overflow:hidden;display:flex;flex-direction:column;"></div>
+    <svg class="resize-grip" id="rgFrench" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
         <path d="M9 15l6-6M13 15l2-2"/>
     </svg>
 </div>
 
 
-<!-- ===================== SETTINGS DRAWER ===================== -->
+<!-- ========== CAMERA OVERLAY ========== -->
+<div id="cameraOverlay" hidden>
+    <video id="cameraVideo" autoplay playsinline muted></video>
+
+    <div id="subtitleWrap" class="pos-bottom">
+        <div class="subtitle-bg">
+            <div id="subArabic" class="hidden"></div>
+            <div id="subFrench">—</div>
+        </div>
+    </div>
+
+    <div id="camControls">
+        <button id="camExitBtn" class="btn" style="background:rgba(0,0,0,.5);border-color:rgba(255,255,255,.2);color:#fff;">
+            <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 2H11.5A1.5 1.5 0 0113 3.5v7A1.5 1.5 0 0111.5 12H9M1 7h8M5 4l-3 3 3 3"/>
+            </svg>
+            Fermer la caméra
+        </button>
+        <span class="cam-label" id="camStatus">Caméra active</span>
+        <button id="camStartBtn" class="btn" style="background:rgba(22,163,74,.85);border-color:transparent;color:#fff;" hidden>Démarrer l'écoute</button>
+        <button id="camStopBtn"  class="btn" style="background:rgba(220,38,38,.85);border-color:transparent;color:#fff;" hidden>Arrêter</button>
+    </div>
+</div>
+
+
+<!-- ========== SETTINGS DRAWER ========== -->
 <div class="settings-overlay" id="settingsOverlay">
     <div class="settings-backdrop" id="settingsBackdrop"></div>
     <div class="settings-drawer">
-        <div class="settings-head">
-            <span class="settings-head-title">Paramètres</span>
+
+        <div class="s-head">
+            <span class="s-head-title">Paramètres</span>
             <button class="btn btn-ghost btn-icon" id="closeSettings">
                 <svg class="icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
                     <path d="M2 2l10 10M12 2L2 12"/>
@@ -1030,305 +697,399 @@
             </button>
         </div>
 
-        <div class="settings-body">
+        <div class="s-body">
 
-            <div class="settings-section">
-                <div class="settings-section-label">Affichage</div>
+            <!-- AFFICHAGE -->
+            <div class="s-section">
+                <div class="s-section-label">Affichage</div>
 
-                <div class="settings-row">
-                    <div class="settings-row-info">
-                        <div class="settings-row-label">Panneau arabe</div>
-                        <div class="settings-row-desc">Afficher le texte original en arabe</div>
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Panneau arabe</div>
+                        <div class="s-row-desc">Afficher le texte original en arabe</div>
                     </div>
                     <label class="toggle">
-                        <input type="checkbox" id="settingArabicVisible" checked>
-                        <div class="toggle-track"></div>
-                        <div class="toggle-thumb"></div>
+                        <input type="checkbox" id="sArabicVis" checked>
+                        <div class="t-track"></div><div class="t-thumb"></div>
                     </label>
                 </div>
 
-                <div class="settings-row">
-                    <div class="settings-row-info">
-                        <div class="settings-row-label">Panneau traduction</div>
-                        <div class="settings-row-desc">Afficher la traduction française</div>
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Panneau traduction</div>
+                        <div class="s-row-desc">Afficher la traduction française</div>
                     </div>
                     <label class="toggle">
-                        <input type="checkbox" id="settingFrenchVisible" checked>
-                        <div class="toggle-track"></div>
-                        <div class="toggle-thumb"></div>
+                        <input type="checkbox" id="sFrenchVis" checked>
+                        <div class="t-track"></div><div class="t-thumb"></div>
                     </label>
                 </div>
 
-                <div class="settings-row">
-                    <div class="settings-row-info">
-                        <div class="settings-row-label">Défilement automatique</div>
-                        <div class="settings-row-desc">Suivre le dernier élément ajouté</div>
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Défilement automatique</div>
+                        <div class="s-row-desc">Suivre le dernier texte</div>
                     </div>
                     <label class="toggle">
-                        <input type="checkbox" id="settingAutoScroll" checked>
-                        <div class="toggle-track"></div>
-                        <div class="toggle-thumb"></div>
-                    </label>
-                </div>
-
-                <div class="settings-row">
-                    <div class="settings-row-info">
-                        <div class="settings-row-label">Horodatage</div>
-                        <div class="settings-row-desc">Afficher l'heure de chaque entrée</div>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" id="settingShowTime" checked>
-                        <div class="toggle-track"></div>
-                        <div class="toggle-thumb"></div>
+                        <input type="checkbox" id="sAutoScroll" checked>
+                        <div class="t-track"></div><div class="t-thumb"></div>
                     </label>
                 </div>
             </div>
 
-            <div class="settings-section">
-                <div class="settings-section-label">Traduction</div>
+            <!-- TRADUCTION -->
+            <div class="s-section">
+                <div class="s-section-label">Traduction</div>
 
-                <div class="settings-row">
-                    <div class="settings-row-info">
-                        <div class="settings-row-label">Traduction en direct</div>
-                        <div class="settings-row-desc">Traduire automatiquement chaque phrase</div>
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Traduction en direct</div>
+                        <div class="s-row-desc">Traduire automatiquement</div>
                     </div>
                     <label class="toggle">
-                        <input type="checkbox" id="settingLiveTranslation" checked>
-                        <div class="toggle-track"></div>
-                        <div class="toggle-thumb"></div>
+                        <input type="checkbox" id="sLiveTr" checked>
+                        <div class="t-track"></div><div class="t-thumb"></div>
                     </label>
                 </div>
 
+                <div class="s-range-row">
+                    <div class="s-range-label">Délai avant traduction</div>
+                    <div class="s-range-ctrl">
+                        <span class="s-range-val" id="delayVal">0 s</span>
+                        <input type="range" id="sDelay" min="0" max="8" step="0.5" value="0">
+                    </div>
+                    <div class="s-row-desc" style="margin-top:2px;">Accumule les phrases pendant N secondes avant d'envoyer à l'API — phrases plus longues et mieux traduites</div>
+                </div>
             </div>
 
-            <div class="settings-section">
-                <div class="settings-section-label">Typographie</div>
+            <!-- TYPOGRAPHIE -->
+            <div class="s-section">
+                <div class="s-section-label">Typographie</div>
 
-                <div class="range-row">
-                    <div class="range-row-label">Taille du texte arabe</div>
-                    <div class="range-controls">
-                        <span class="range-val" id="arabicSizeVal">1.5×</span>
-                        <input type="range" id="settingArabicSize" min="0.8" max="3.5" step="0.1" value="1.5">
+                <div class="s-range-row">
+                    <div class="s-range-label">Taille du texte arabe</div>
+                    <div class="s-range-ctrl">
+                        <span class="s-range-val" id="arSizeVal">1.55×</span>
+                        <input type="range" id="sArSize" min="0.8" max="4" step="0.05" value="1.55">
                     </div>
                 </div>
 
-                <div class="range-row">
-                    <div class="range-row-label">Taille du texte français</div>
-                    <div class="range-controls">
-                        <span class="range-val" id="frenchSizeVal">1.2×</span>
-                        <input type="range" id="settingFrenchSize" min="0.8" max="3.5" step="0.1" value="1.2">
+                <div class="s-range-row">
+                    <div class="s-range-label">Taille du texte français</div>
+                    <div class="s-range-ctrl">
+                        <span class="s-range-val" id="frSizeVal">1.2×</span>
+                        <input type="range" id="sFrSize" min="0.8" max="4" step="0.05" value="1.2">
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODE TV -->
+            <div class="s-section">
+                <div class="s-section-label">Mode TV</div>
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Mode présentation TV</div>
+                        <div class="s-row-desc">Plein écran, contrôles masqués, texte agrandi. Raccourci : T</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="sTvMode">
+                        <div class="t-track"></div><div class="t-thumb"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- CAMÉRA & SOUS-TITRES -->
+            <div class="s-section">
+                <div class="s-section-label">Caméra &amp; Sous-titres</div>
+
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Activer la caméra</div>
+                        <div class="s-row-desc">Mode film avec sous-titres en direct. Raccourci : C</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="sCameraOn">
+                        <div class="t-track"></div><div class="t-thumb"></div>
+                    </label>
+                </div>
+
+                <div class="s-row" id="camDeviceRow" style="display:none;">
+                    <div class="s-row-info" style="width:100%">
+                        <div class="s-row-label">Sélection de caméra</div>
+                        <select class="s-select" id="sCamDevice">
+                            <option value="">Caméra par défaut</option>
+                        </select>
                     </div>
                 </div>
 
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Afficher l'arabe en sous-titre</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="sSubArabic">
+                        <div class="t-track"></div><div class="t-thumb"></div>
+                    </label>
+                </div>
+
+                <div class="s-row">
+                    <div class="s-row-info">
+                        <div class="s-row-label">Position des sous-titres</div>
+                    </div>
+                    <select class="s-select" id="sSubPos" style="width:auto;margin-top:0;">
+                        <option value="bottom">Bas</option>
+                        <option value="top">Haut</option>
+                    </select>
+                </div>
+
+                <div class="s-range-row">
+                    <div class="s-range-label">Taille des sous-titres</div>
+                    <div class="s-range-ctrl">
+                        <span class="s-range-val" id="subSizeVal">2×</span>
+                        <input type="range" id="sSubSize" min="0.8" max="5" step="0.1" value="2">
+                    </div>
+                </div>
+
+                <div class="s-range-row">
+                    <div class="s-range-label">Opacité du fond des sous-titres</div>
+                    <div class="s-range-ctrl">
+                        <span class="s-range-val" id="subOpVal">85%</span>
+                        <input type="range" id="sSubOp" min="0" max="1" step="0.05" value="0.85">
+                    </div>
+                </div>
             </div>
 
-        </div><!-- .settings-body -->
+        </div><!-- .s-body -->
     </div><!-- .settings-drawer -->
 </div><!-- .settings-overlay -->
 
 
-<!-- ===================== TOAST ===================== -->
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 
 <script>
 'use strict';
 
-/* =============================================
+/* ==============================================
    STATE
-============================================= */
+============================================== */
 const state = {
-    isListening:      false,
-    liveTranslation:  true,
-    autoScroll:       true,
-    showTime:         true,
-    arabicVisible:    true,
-    frenchVisible:    true,
-    arabicFloating:   false,
-    frenchFloating:   false,
-    totalSentences:   0,
-    totalWords:       0,
-    sessionStart:     null,
-    sessionTimer:     null,
-    interimArabic:    '',
+    isListening:     false,
+    liveTranslation: true,
+    autoScroll:      true,
+    arabicVisible:   true,
+    frenchVisible:   true,
+    arabicFloating:  false,
+    frenchFloating:  false,
+    tvMode:          false,
+    cameraOn:        false,
+    subArabic:       false,
+    subPos:          'bottom',
+    delaySeconds:    0,
+    totalSentences:  0,
+    totalWords:      0,
+    sessionStart:    null,
+    sessionTimer:    null,
+    // translation buffer for delay
+    trBuffer:        '',
+    trTimestamp:     '',
+    trTimer:         null,
+    // subtitle fade timer
+    subFadeTimer:    null,
+    // camera stream
+    cameraStream:    null,
+    cameraDeviceId:  '',
 };
 
-/* =============================================
-   DOM REFERENCES
-============================================= */
-const el = (id) => document.getElementById(id);
-
-const dom = {
-    startBtn:           el('startBtn'),
-    stopBtn:            el('stopBtn'),
-    clearBtn:           el('clearBtn'),
-    settingsBtn:        el('settingsBtn'),
-    statusBadge:        el('statusBadge'),
-    statusText:         el('statusText'),
-
-    panelsContainer:    el('panelsContainer'),
-    arabicPanel:        el('arabicPanel'),
-    frenchPanel:        el('frenchPanel'),
-    panelDivider:       el('panelDivider'),
-    arabicContent:      el('arabicContent'),
-    frenchContent:      el('frenchContent'),
-    arabicEmpty:        el('arabicEmpty'),
-    frenchEmpty:        el('frenchEmpty'),
-
-    detachArabic:       el('detachArabic'),
-    detachFrench:       el('detachFrench'),
-
-    floatingArabic:     el('floatingArabic'),
-    floatingFrench:     el('floatingFrench'),
-    floatingArabicBody: el('floatingArabicBody'),
-    floatingFrenchBody: el('floatingFrenchBody'),
-    dockArabic:         el('dockArabic'),
-    dockFrench:         el('dockFrench'),
-    closeFloatingArabic: el('closeFloatingArabic'),
-    closeFloatingFrench: el('closeFloatingFrench'),
-
-    settingsOverlay:    el('settingsOverlay'),
-    settingsBackdrop:   el('settingsBackdrop'),
-    closeSettings:      el('closeSettings'),
-
-    settingArabicVisible:    el('settingArabicVisible'),
-    settingFrenchVisible:    el('settingFrenchVisible'),
-    settingAutoScroll:       el('settingAutoScroll'),
-    settingShowTime:         el('settingShowTime'),
-    settingLiveTranslation:  el('settingLiveTranslation'),
-    settingArabicSize:       el('settingArabicSize'),
-    settingFrenchSize:       el('settingFrenchSize'),
-    arabicSizeVal:           el('arabicSizeVal'),
-    frenchSizeVal:           el('frenchSizeVal'),
-
-    totalSentences:     el('totalSentences'),
-    totalWords:         el('totalWords'),
-    sessionTime:        el('sessionTime'),
-    toast:              el('toast'),
+/* ==============================================
+   DOM
+============================================== */
+const $  = id => document.getElementById(id);
+const el = {
+    app:             $('app'),
+    startBtn:        $('startBtn'),   stopBtn:    $('stopBtn'),
+    clearBtn:        $('clearBtn'),   settingsBtn:$('settingsBtn'),
+    tvBtn:           $('tvBtn'),
+    statusBadge:     $('statusBadge'), statusText: $('statusText'),
+    panelsContainer: $('panelsContainer'),
+    arabicPanel:     $('arabicPanel'),  frenchPanel: $('frenchPanel'),
+    panelDivider:    $('panelDivider'),
+    arabicContent:   $('arabicContent'), frenchContent: $('frenchContent'),
+    arabicFlow:      $('arabicFlow'),   frenchFlow:   $('frenchFlow'),
+    arabicEmpty:     $('arabicEmpty'),  frenchEmpty:  $('frenchEmpty'),
+    detachArabic:    $('detachArabic'), detachFrench: $('detachFrench'),
+    floatingArabic:  $('floatingArabic'), floatingFrench: $('floatingFrench'),
+    fArabicBody:     $('fArabicBody'),  fFrenchBody: $('fFrenchBody'),
+    dockArabic:      $('dockArabic'),   dockFrench:  $('dockFrench'),
+    closeFArabic:    $('closeFArabic'), closeFfrench:$('closeFfrench'),
+    tvBar:           $('tvBar'),        tvExitBtn:   $('tvExitBtn'),
+    tvBarStatus:     $('tvBarStatus'),  tvStartBtn:  $('tvStartBtn'),
+    tvStopBtn:       $('tvStopBtn'),
+    cameraOverlay:   $('cameraOverlay'), cameraVideo: $('cameraVideo'),
+    subtitleWrap:    $('subtitleWrap'),
+    subArabic:       $('subArabic'),    subFrench:   $('subFrench'),
+    camControls:     $('camControls'),  camExitBtn:  $('camExitBtn'),
+    camStatus:       $('camStatus'),    camStartBtn: $('camStartBtn'),
+    camStopBtn:      $('camStopBtn'),
+    settingsOverlay: $('settingsOverlay'), settingsBackdrop: $('settingsBackdrop'),
+    closeSettings:   $('closeSettings'),
+    sArabicVis:      $('sArabicVis'),   sFrenchVis:  $('sFrenchVis'),
+    sAutoScroll:     $('sAutoScroll'),  sLiveTr:     $('sLiveTr'),
+    sDelay:          $('sDelay'),       delayVal:    $('delayVal'),
+    sArSize:         $('sArSize'),      arSizeVal:   $('arSizeVal'),
+    sFrSize:         $('sFrSize'),      frSizeVal:   $('frSizeVal'),
+    sTvMode:         $('sTvMode'),
+    sCameraOn:       $('sCameraOn'),    sCamDevice:  $('sCamDevice'),
+    camDeviceRow:    $('camDeviceRow'),
+    sSubArabic:      $('sSubArabic'),
+    sSubPos:         $('sSubPos'),
+    sSubSize:        $('sSubSize'),     subSizeVal:  $('subSizeVal'),
+    sSubOp:          $('sSubOp'),       subOpVal:    $('subOpVal'),
+    totalSentences:  $('totalSentences'), totalWords: $('totalWords'),
+    sessionTime:     $('sessionTime'),
+    toast:           $('toast'),
 };
 
-/* =============================================
+/* ==============================================
    TOAST
-============================================= */
-let toastTimer = null;
-
-function showToast(msg, type = '') {
-    dom.toast.textContent = msg;
-    dom.toast.className   = `toast${type ? ' ' + type : ''} show`;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-        dom.toast.classList.remove('show');
-    }, type === 'error' ? 5000 : 2500);
+============================================== */
+let toastT;
+function toast(msg, type = '') {
+    el.toast.textContent  = msg;
+    el.toast.className    = `toast${type ? ' ' + type : ''} show`;
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.toast.classList.remove('show'),
+                        type === 'err' ? 5000 : 2500);
 }
 
-/* =============================================
+/* ==============================================
    STATUS
-============================================= */
+============================================== */
 function setStatus(text, mode = '') {
-    dom.statusText.textContent  = text;
-    dom.statusBadge.className   = `header-status${mode ? ' ' + mode : ''}`;
+    el.statusText.textContent = text;
+    el.statusBadge.className  = `status-badge${mode ? ' ' + mode : ''}`;
+    el.tvBarStatus.textContent = text;
 }
 
-/* =============================================
+/* ==============================================
    STATS
-============================================= */
+============================================== */
 function updateStats() {
-    dom.totalSentences.textContent = state.totalSentences;
-    dom.totalWords.textContent     = state.totalWords;
+    el.totalSentences.textContent = state.totalSentences;
+    el.totalWords.textContent     = state.totalWords;
 }
-
 function startTimer() {
     state.sessionStart = Date.now();
     state.sessionTimer = setInterval(() => {
         const ms = Date.now() - state.sessionStart;
-        const m  = String(Math.floor(ms / 60000)).padStart(2, '0');
-        const s  = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
-        dom.sessionTime.textContent = `${m}:${s}`;
+        el.sessionTime.textContent =
+            `${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor((ms%60000)/1000)).padStart(2,'0')}`;
     }, 1000);
 }
+function stopTimer() { clearInterval(state.sessionTimer); state.sessionTimer = null; }
 
-function stopTimer() {
-    clearInterval(state.sessionTimer);
-    state.sessionTimer = null;
+/* ==============================================
+   FLOWING TEXT
+============================================== */
+const MAX_SENTENCES = 120;
+
+function getArabicFlow() {
+    return state.arabicFloating
+        ? el.fArabicBody.querySelector('.flow-text')
+        : el.arabicFlow;
+}
+function getFrenchFlow() {
+    return state.frenchFloating
+        ? el.fFrenchBody.querySelector('.flow-text')
+        : el.frenchFlow;
+}
+function getArabicScroll() {
+    return state.arabicFloating ? el.fArabicBody.querySelector('.content-area') : el.arabicContent;
+}
+function getFrenchScroll() {
+    return state.frenchFloating ? el.fFrenchBody.querySelector('.content-area') : el.frenchContent;
 }
 
-/* =============================================
-   CONTENT HELPERS
-============================================= */
-function getTimestamp() {
-    return new Date().toLocaleTimeString('fr-FR', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-    });
+function hideEmpty(which) {
+    const e = which === 'arabic' ? el.arabicEmpty : el.frenchEmpty;
+    if (e) e.style.display = 'none';
 }
 
-function activeArabicContainer() {
-    return state.arabicFloating ? dom.floatingArabicBody : dom.arabicContent;
-}
+function appendSentence(flow, text, scrollEl) {
+    hideEmpty(flow === el.arabicFlow || flow === getArabicFlow() ? 'arabic' : 'french');
 
-function activeFrenchContainer() {
-    return state.frenchFloating ? dom.floatingFrenchBody : dom.frenchContent;
-}
+    // Age existing sentences
+    flow.querySelectorAll('.sentence.recent').forEach(s => s.classList.replace('recent', 'mid'));
+    flow.querySelectorAll('.sentence.mid').forEach(s => s.classList.replace('mid', 'old'));
 
-function removeEmpty(container) {
-    const e = container.querySelector('.empty-state');
-    if (e) e.remove();
-}
+    // Remove oldest if too many
+    const all = flow.querySelectorAll('.sentence');
+    if (all.length >= MAX_SENTENCES) all[0].remove();
 
-function createEntry(text, timestamp, isInterim = false) {
-    const wrap = document.createElement('div');
-    wrap.className = `entry${isInterim ? ' entry-interim' : ''}`;
+    const span = document.createElement('span');
+    span.className   = 'sentence recent';
+    span.textContent = text + ' ';
+    flow.appendChild(span);
 
-    const time = document.createElement('span');
-    time.className   = 'entry-time';
-    time.textContent = state.showTime ? timestamp : '';
-
-    const body = document.createElement('div');
-    body.className   = 'entry-body';
-    body.textContent = text;
-
-    wrap.appendChild(time);
-    wrap.appendChild(body);
-    return wrap;
-}
-
-function appendEntry(container, entry) {
-    removeEmpty(container);
-    container.appendChild(entry);
-    if (state.autoScroll) {
-        container.scrollTop = container.scrollHeight;
+    if (state.autoScroll && scrollEl) {
+        scrollEl.scrollTop = scrollEl.scrollHeight;
     }
 }
 
-/* =============================================
-   INTERIM (live Arabic preview)
-============================================= */
 function updateInterim(text) {
-    const containers = [
-        state.arabicFloating ? dom.floatingArabicBody : dom.arabicContent
-    ];
-    containers.forEach(c => {
-        const old = c.querySelector('.entry-interim');
-        if (old) old.remove();
-        if (text) {
-            const e = createEntry(text, '—', true);
-            c.appendChild(e);
-            if (state.autoScroll) c.scrollTop = c.scrollHeight;
+    const flow = getArabicFlow();
+    if (!flow) return;
+    let s = flow.querySelector('.s-interim');
+    if (text) {
+        if (!s) {
+            s = document.createElement('span');
+            s.className = 's-interim';
+            flow.appendChild(s);
         }
-    });
+        s.textContent = text;
+        hideEmpty('arabic');
+        if (state.autoScroll) {
+            const sc = getArabicScroll();
+            if (sc) sc.scrollTop = sc.scrollHeight;
+        }
+    } else if (s) {
+        s.remove();
+    }
 }
 
-/* =============================================
+/* ==============================================
+   SUBTITLE (camera mode)
+============================================== */
+function updateSubtitle(arabic, french) {
+    if (french) {
+        el.subFrench.textContent = french;
+        el.subFrench.style.opacity = '1';
+    }
+    if (arabic && state.subArabic) {
+        el.subArabic.textContent = arabic;
+        el.subArabic.style.opacity = '1';
+    }
+    // auto-fade after 8 seconds of silence
+    clearTimeout(state.subFadeTimer);
+    state.subFadeTimer = setTimeout(() => {
+        el.subFrench.style.opacity = '0.35';
+        el.subArabic.style.opacity = '0.35';
+    }, 8000);
+}
+
+/* ==============================================
    SPEECH RECOGNITION
-============================================= */
+============================================== */
 let recognition = null;
+let lastArabicText = '';
 
 function initSpeech() {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        showToast('Reconnaissance vocale non supportée — utilisez Chrome ou Edge', 'error');
+        toast('Reconnaissance vocale non supportée — utilisez Chrome ou Edge', 'err');
         return false;
     }
-
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SR  = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SR();
     recognition.continuous      = true;
     recognition.interimResults  = true;
@@ -1339,41 +1100,41 @@ function initSpeech() {
         state.isListening = true;
         setStatus('Écoute active', 'listening');
         startTimer();
+        syncTvButtons();
+        syncCamButtons();
     };
 
     recognition.onresult = (event) => {
-        let interim = '';
-        let final   = '';
-
+        let interim = '', final = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
             const t = event.results[i][0].transcript;
             if (event.results[i].isFinal) final += t;
             else interim += t;
         }
-
         if (interim.trim()) updateInterim(interim.trim());
 
         if (final.trim()) {
-            const ts = getTimestamp();
-            // Arabic entry
-            appendEntry(
-                state.arabicFloating ? dom.floatingArabicBody : dom.arabicContent,
-                createEntry(final.trim(), ts)
-            );
+            const ts   = getTs();
+            const text = final.trim();
+            lastArabicText = text;
+
+            // Append to arabic flow
+            appendSentence(getArabicFlow(), text, getArabicScroll());
+
             // Stats
             state.totalSentences++;
-            state.totalWords += final.trim().split(/\s+/).filter(Boolean).length;
+            state.totalWords += text.split(/\s+/).filter(Boolean).length;
             updateStats();
-            // Clear interim
             updateInterim('');
-            // Translation
-            if (state.liveTranslation) translateText(final.trim(), ts);
+
+            // Translation with configurable delay
+            if (state.liveTranslation) bufferTranslation(text, ts);
         }
     };
 
-    recognition.onerror = (event) => {
-        if (event.error !== 'no-speech') {
-            showToast(errorMsg(event.error), 'error');
+    recognition.onerror = (e) => {
+        if (e.error !== 'no-speech') {
+            toast(errMsg(e.error), 'err');
             if (state.isListening) setTimeout(restartSpeech, 2000);
         }
     };
@@ -1388,375 +1149,515 @@ function initSpeech() {
 function restartSpeech() {
     if (recognition && state.isListening) {
         try { recognition.start(); }
-        catch (e) { setTimeout(restartSpeech, 1000); }
+        catch { setTimeout(restartSpeech, 1000); }
     }
 }
 
-function errorMsg(code) {
-    const map = {
-        'audio-capture':       'Impossible d\'accéder au microphone',
-        'not-allowed':         'Permission microphone refusée',
-        'network':             'Erreur réseau',
+function errMsg(code) {
+    return {
+        'audio-capture':          'Impossible d\'accéder au microphone',
+        'not-allowed':            'Permission microphone refusée',
+        'network':                'Erreur réseau',
         'language-not-supported': 'Langue arabe non supportée',
-    };
-    return map[code] || `Erreur: ${code}`;
+    }[code] || `Erreur: ${code}`;
 }
 
-/* =============================================
-   TRANSLATION
-============================================= */
-async function translateText(text, timestamp) {
+function getTs() {
+    return new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+
+/* ==============================================
+   TRANSLATION — BUFFERED DELAY
+============================================== */
+function bufferTranslation(text, ts) {
+    state.trBuffer    += (state.trBuffer ? ' ' : '') + text;
+    state.trTimestamp  = ts;
+    clearTimeout(state.trTimer);
+    state.trTimer = setTimeout(() => {
+        const buf = state.trBuffer;
+        const t   = state.trTimestamp;
+        state.trBuffer = '';
+        translateText(buf, t);
+    }, state.delaySeconds * 1000);
+}
+
+async function translateText(text, ts) {
     try {
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ar|fr`;
-        const res  = await fetch(url);
+        const res  = await fetch(
+            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ar|fr`);
         const data = await res.json();
         const tr   = data.responseStatus === 200
             ? data.responseData.translatedText
-            : fallbackTranslate(text);
-        appendEntry(
-            state.frenchFloating ? dom.floatingFrenchBody : dom.frenchContent,
-            createEntry(tr, timestamp)
-        );
+            : fallback(text);
+        receiveFrench(tr, text);
     } catch {
-        appendEntry(
-            state.frenchFloating ? dom.floatingFrenchBody : dom.frenchContent,
-            createEntry(fallbackTranslate(text), timestamp)
-        );
+        receiveFrench(fallback(text), text);
     }
 }
 
-function fallbackTranslate(text) {
-    const dict = {
-        'السلام عليكم':              'Que la paix soit sur vous',
-        'ورحمة الله وبركاته':        'et la miséricorde d\'Allah et ses bénédictions',
-        'الحمد لله':                 'Louange à Allah',
-        'بسم الله الرحمن الرحيم':   'Au nom d\'Allah, le Tout Miséricordieux',
-        'صلى الله عليه وسلم':       'que la paix et la bénédiction d\'Allah soient sur lui',
-        'رضي الله عنه':             'qu\'Allah soit satisfait de lui',
-        'أشهد أن لا إله إلا الله':  'J\'atteste qu\'il n\'y a de dieu qu\'Allah',
-        'أشهد أن محمدا رسول الله':  'J\'atteste que Muhammad est le messager d\'Allah',
-        'إن الله':                   'Certes, Allah',
-        'قال الله تعالى':            'Allah le Très-Haut a dit',
-        'قال رسول الله':             'Le Messager d\'Allah a dit',
-        'في القرآن الكريم':          'dans le noble Coran',
-        'أيها المؤمنون':             'Ô croyants',
-        'أيها الناس':                'Ô gens',
-        'اتقوا الله':                'Craignez Allah',
-        'رحمكم الله':                'Qu\'Allah vous fasse miséricorde',
-        'بارك الله فيكم':            'Qu\'Allah vous bénisse',
-        'جزاكم الله خيرا':           'Qu\'Allah vous récompense en bien',
-        'والله أعلم':                'Et Allah sait mieux',
+function receiveFrench(trText, arabicText) {
+    appendSentence(getFrenchFlow(), trText, getFrenchScroll());
+    hideEmpty('french');
+    if (state.cameraOn) updateSubtitle(arabicText, trText);
+}
+
+function fallback(text) {
+    const d = {
+        'السلام عليكم':             'Que la paix soit sur vous',
+        'ورحمة الله وبركاته':       'et la miséricorde d\'Allah et ses bénédictions',
+        'الحمد لله':                'Louange à Allah',
+        'بسم الله الرحمن الرحيم':  'Au nom d\'Allah, le Tout Miséricordieux',
+        'صلى الله عليه وسلم':      'que la paix et la bénédiction d\'Allah soient sur lui',
+        'رضي الله عنه':            'qu\'Allah soit satisfait de lui',
+        'أشهد أن لا إله إلا الله': 'J\'atteste qu\'il n\'y a de dieu qu\'Allah',
+        'أشهد أن محمدا رسول الله': 'J\'atteste que Muhammad est le messager d\'Allah',
+        'إن الله':                  'Certes, Allah',
+        'قال الله تعالى':           'Allah le Très-Haut a dit',
+        'قال رسول الله':            'Le Messager d\'Allah a dit',
+        'في القرآن الكريم':         'dans le noble Coran',
+        'أيها المؤمنون':            'Ô croyants',
+        'أيها الناس':               'Ô gens',
+        'اتقوا الله':               'Craignez Allah',
+        'رحمكم الله':               'Qu\'Allah vous fasse miséricorde',
+        'بارك الله فيكم':           'Qu\'Allah vous bénisse',
+        'جزاكم الله خيرا':          'Qu\'Allah vous récompense en bien',
+        'والله أعلم':               'Et Allah sait mieux',
     };
-    for (const [ar, fr] of Object.entries(dict)) {
+    for (const [ar, fr] of Object.entries(d)) {
         if (text.includes(ar)) return text.replace(ar, fr);
     }
-    return `[Traduction non disponible] ${text.substring(0, 80)}`;
+    return `[Traduction indisponible] ${text.substring(0, 90)}`;
 }
 
-/* =============================================
+/* ==============================================
    CONTROLS
-============================================= */
+============================================== */
 function startListening() {
     if (!recognition && !initSpeech()) return;
     try {
         recognition.start();
-        dom.startBtn.hidden = true;
-        dom.stopBtn.hidden  = false;
-        setStatus('Initialisation...', 'processing');
-        // Clear content
-        clearForSession();
-    } catch {
-        showToast('Impossible de démarrer la reconnaissance vocale', 'error');
-    }
+        el.startBtn.hidden  = true;
+        el.stopBtn.hidden   = false;
+        setStatus('Initialisation…', 'processing');
+        clearAll();
+    } catch { toast('Impossible de démarrer la reconnaissance vocale', 'err'); }
 }
 
 function stopListening() {
     state.isListening = false;
+    clearTimeout(state.trTimer);
+    state.trBuffer = '';
     if (recognition) recognition.stop();
-    dom.startBtn.hidden = false;
-    dom.stopBtn.hidden  = true;
+    el.startBtn.hidden = false;
+    el.stopBtn.hidden  = true;
     setStatus('Arrêté', '');
     stopTimer();
+    syncTvButtons();
+    syncCamButtons();
 }
 
-function clearForSession() {
-    [dom.arabicContent, dom.frenchContent,
-     dom.floatingArabicBody, dom.floatingFrenchBody].forEach(c => {
-        c.innerHTML = '';
-    });
-    dom.arabicContent.appendChild(buildEmpty('بدء الاستماع لعرض النص هنا'));
-    dom.frenchContent.appendChild(buildEmpty('La traduction apparaîtra ici en temps réel'));
-}
-
-function clearContent() {
-    clearForSession();
+function clearAll() {
+    el.arabicFlow.innerHTML  = '';
+    el.frenchFlow.innerHTML  = '';
+    el.arabicEmpty.style.display = '';
+    el.frenchEmpty.style.display = '';
+    // also clear floating bodies if present
+    const fa = el.fArabicBody.querySelector('.flow-text');
+    const ff = el.fFrenchBody.querySelector('.flow-text');
+    if (fa) fa.innerHTML = '';
+    if (ff) ff.innerHTML = '';
     state.totalSentences = 0;
     state.totalWords     = 0;
     updateStats();
-    showToast('Contenu effacé');
 }
 
-function buildEmpty(text) {
-    const wrap = document.createElement('div');
-    wrap.className = 'empty-state';
-    wrap.innerHTML = `<span class="empty-text">${text}</span>`;
-    return wrap;
+function clearContent() {
+    clearAll();
+    toast('Contenu effacé');
 }
 
-/* =============================================
+el.startBtn.addEventListener('click', startListening);
+el.stopBtn.addEventListener('click', stopListening);
+el.clearBtn.addEventListener('click', clearContent);
+
+/* ==============================================
    SETTINGS
-============================================= */
-function openSettings() {
-    dom.settingsOverlay.classList.add('open');
-}
-function closeSettings() {
-    dom.settingsOverlay.classList.remove('open');
-}
+============================================== */
+function openSettings()  { el.settingsOverlay.classList.add('open'); }
+function closeSettingsF() { el.settingsOverlay.classList.remove('open'); }
 
-dom.settingsBtn.addEventListener('click', openSettings);
-dom.closeSettings.addEventListener('click', closeSettings);
-dom.settingsBackdrop.addEventListener('click', closeSettings);
+el.settingsBtn.addEventListener('click', openSettings);
+el.closeSettings.addEventListener('click', closeSettingsF);
+el.settingsBackdrop.addEventListener('click', closeSettingsF);
 
-dom.settingArabicVisible.addEventListener('change', (e) => {
+el.sArabicVis.addEventListener('change', e => {
     state.arabicVisible = e.target.checked;
     if (!state.arabicFloating) {
-        dom.arabicPanel.classList.toggle('hidden', !state.arabicVisible);
+        el.arabicPanel.classList.toggle('hidden', !state.arabicVisible);
         updateDivider();
     }
 });
-
-dom.settingFrenchVisible.addEventListener('change', (e) => {
+el.sFrenchVis.addEventListener('change', e => {
     state.frenchVisible = e.target.checked;
     if (!state.frenchFloating) {
-        dom.frenchPanel.classList.toggle('hidden', !state.frenchVisible);
+        el.frenchPanel.classList.toggle('hidden', !state.frenchVisible);
         updateDivider();
     }
 });
+el.sAutoScroll.addEventListener('change', e => { state.autoScroll = e.target.checked; });
+el.sLiveTr.addEventListener('change', e => { state.liveTranslation = e.target.checked; });
 
-dom.settingAutoScroll.addEventListener('change', (e) => {
-    state.autoScroll = e.target.checked;
+el.sDelay.addEventListener('input', e => {
+    state.delaySeconds = parseFloat(e.target.value);
+    el.delayVal.textContent = state.delaySeconds === 0
+        ? '0 s (immédiat)'
+        : `${state.delaySeconds} s`;
 });
 
-dom.settingShowTime.addEventListener('change', (e) => {
-    state.showTime = e.target.checked;
-    // Update existing timestamps visibility
-    document.querySelectorAll('.entry-time').forEach(t => {
-        t.style.display = state.showTime ? '' : 'none';
-    });
-});
-
-dom.settingLiveTranslation.addEventListener('change', (e) => {
-    state.liveTranslation = e.target.checked;
-});
-
-dom.settingArabicSize.addEventListener('input', (e) => {
+el.sArSize.addEventListener('input', e => {
     const v = parseFloat(e.target.value);
-    dom.arabicSizeVal.textContent = `${v.toFixed(1)}×`;
+    el.arSizeVal.textContent = `${v.toFixed(2)}×`;
     document.documentElement.style.setProperty('--arabic-size', `${v}rem`);
 });
-
-dom.settingFrenchSize.addEventListener('input', (e) => {
+el.sFrSize.addEventListener('input', e => {
     const v = parseFloat(e.target.value);
-    dom.frenchSizeVal.textContent = `${v.toFixed(1)}×`;
+    el.frSizeVal.textContent = `${v.toFixed(2)}×`;
     document.documentElement.style.setProperty('--french-size', `${v}rem`);
 });
 
-/* =============================================
-   MAIN CONTROLS EVENTS
-============================================= */
-dom.startBtn.addEventListener('click', startListening);
-dom.stopBtn.addEventListener('click', stopListening);
-dom.clearBtn.addEventListener('click', clearContent);
+el.sTvMode.addEventListener('change', e => {
+    e.target.checked ? enableTV() : disableTV();
+});
 
-/* =============================================
-   PANEL DIVIDER (resizable split)
-============================================= */
-function updateDivider() {
-    const arabicHidden = dom.arabicPanel.classList.contains('hidden');
-    const frenchHidden = dom.frenchPanel.classList.contains('hidden');
-    dom.panelDivider.style.display = (arabicHidden || frenchHidden) ? 'none' : '';
+el.sCameraOn.addEventListener('change', e => {
+    e.target.checked ? enableCamera() : disableCamera();
+    el.camDeviceRow.style.display = e.target.checked ? '' : 'none';
+});
+
+el.sCamDevice.addEventListener('change', async e => {
+    state.cameraDeviceId = e.target.value;
+    if (state.cameraOn) {
+        await stopCameraStream();
+        await startCameraStream();
+    }
+});
+
+el.sSubArabic.addEventListener('change', e => {
+    state.subArabic = e.target.checked;
+    el.subArabic.classList.toggle('hidden', !state.subArabic);
+});
+
+el.sSubPos.addEventListener('change', e => {
+    state.subPos = e.target.value;
+    el.subtitleWrap.className = `pos-${state.subPos}`;
+});
+
+el.sSubSize.addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    el.subSizeVal.textContent = `${v.toFixed(1)}×`;
+    document.documentElement.style.setProperty('--sub-size', `${v}rem`);
+});
+
+el.sSubOp.addEventListener('input', e => {
+    const v = parseFloat(e.target.value);
+    el.subOpVal.textContent = `${Math.round(v * 100)}%`;
+    document.documentElement.style.setProperty('--sub-opacity', v);
+});
+
+/* ==============================================
+   TV MODE
+============================================== */
+let tvHideTimer = null;
+
+function enableTV() {
+    state.tvMode = true;
+    document.body.classList.add('tv');
+    el.sTvMode.checked = true;
+    el.tvBtn.style.background = '#2563eb';
+    el.tvBtn.style.borderColor = '#2563eb';
+    el.tvBtn.style.color = '#fff';
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+    showTvBar();
 }
 
-let divDragging = false;
-let divStartX   = 0;
-let divAW       = 0;  // arabic panel start width
+function disableTV() {
+    state.tvMode = false;
+    document.body.classList.remove('tv');
+    el.sTvMode.checked = false;
+    el.tvBtn.style.background = '';
+    el.tvBtn.style.borderColor = '';
+    el.tvBtn.style.color = '';
+    clearTimeout(tvHideTimer);
+    el.tvBar.classList.remove('visible');
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
 
-dom.panelDivider.addEventListener('mousedown', (e) => {
-    divDragging = true;
-    divStartX   = e.clientX;
-    divAW       = dom.arabicPanel.getBoundingClientRect().width;
-    dom.panelDivider.classList.add('active');
-    document.body.style.cursor = 'col-resize';
+function showTvBar() {
+    el.tvBar.classList.add('visible');
+    clearTimeout(tvHideTimer);
+    tvHideTimer = setTimeout(() => el.tvBar.classList.remove('visible'), 3500);
+}
+
+function syncTvButtons() {
+    el.tvStartBtn.hidden = state.isListening;
+    el.tvStopBtn.hidden  = !state.isListening;
+}
+
+el.tvBtn.addEventListener('click', () => state.tvMode ? disableTV() : enableTV());
+el.tvExitBtn.addEventListener('click', disableTV);
+el.tvStartBtn.addEventListener('click', () => { startListening(); closeSettingsF(); });
+el.tvStopBtn.addEventListener('click',  stopListening);
+
+document.addEventListener('mousemove', () => {
+    if (state.tvMode) showTvBar();
+    if (state.cameraOn) showCamControls();
+});
+document.addEventListener('keydown', () => {
+    if (state.tvMode) showTvBar();
+    if (state.cameraOn) showCamControls();
+});
+
+/* ==============================================
+   CAMERA MODE
+============================================== */
+let camHideTimer = null;
+
+async function enableCamera() {
+    state.cameraOn = true;
+    el.sCameraOn.checked = true;
+    await populateCameras();
+    const ok = await startCameraStream();
+    if (!ok) {
+        state.cameraOn = false;
+        el.sCameraOn.checked = false;
+        return;
+    }
+    el.cameraOverlay.removeAttribute('hidden');
+    showCamControls();
+    syncCamButtons();
+    closeSettingsF();
+}
+
+function disableCamera() {
+    state.cameraOn = false;
+    el.sCameraOn.checked = false;
+    el.cameraOverlay.hidden = true;
+    stopCameraStream();
+    el.camDeviceRow.style.display = 'none';
+}
+
+async function startCameraStream() {
+    try {
+        const constraints = {
+            video: state.cameraDeviceId
+                ? { deviceId: { exact: state.cameraDeviceId } }
+                : { facingMode: 'user' },
+            audio: false,
+        };
+        state.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        el.cameraVideo.srcObject = state.cameraStream;
+        return true;
+    } catch (e) {
+        toast('Accès caméra refusé ou non disponible', 'err');
+        return false;
+    }
+}
+
+function stopCameraStream() {
+    if (state.cameraStream) {
+        state.cameraStream.getTracks().forEach(t => t.stop());
+        state.cameraStream = null;
+        el.cameraVideo.srcObject = null;
+    }
+}
+
+async function populateCameras() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const cams    = devices.filter(d => d.kind === 'videoinput');
+        el.sCamDevice.innerHTML = '<option value="">Caméra par défaut</option>';
+        cams.forEach((d, i) => {
+            const opt   = document.createElement('option');
+            opt.value   = d.deviceId;
+            opt.textContent = d.label || `Caméra ${i + 1}`;
+            el.sCamDevice.appendChild(opt);
+        });
+        el.camDeviceRow.style.display = '';
+    } catch {}
+}
+
+function showCamControls() {
+    el.camControls.classList.add('visible');
+    clearTimeout(camHideTimer);
+    camHideTimer = setTimeout(() => el.camControls.classList.remove('visible'), 4000);
+}
+
+function syncCamButtons() {
+    el.camStartBtn.hidden = state.isListening;
+    el.camStopBtn.hidden  = !state.isListening;
+}
+
+el.camExitBtn.addEventListener('click', disableCamera);
+el.camStartBtn.addEventListener('click', startListening);
+el.camStopBtn.addEventListener('click',  stopListening);
+
+/* ==============================================
+   PANEL DIVIDER RESIZE
+============================================== */
+function updateDivider() {
+    const ah = el.arabicPanel.classList.contains('hidden') || state.arabicFloating;
+    const fh = el.frenchPanel.classList.contains('hidden') || state.frenchFloating;
+    el.panelDivider.style.display = (ah || fh) ? 'none' : '';
+}
+
+let divDrag = false, divStartX = 0, divAW = 0;
+
+el.panelDivider.addEventListener('mousedown', e => {
+    divDrag   = true;
+    divStartX = e.clientX;
+    divAW     = el.arabicPanel.getBoundingClientRect().width;
+    el.panelDivider.classList.add('active');
+    document.body.style.cursor     = 'col-resize';
     document.body.style.userSelect = 'none';
     e.preventDefault();
 });
-
-document.addEventListener('mousemove', (e) => {
-    if (!divDragging) return;
-    const dx          = e.clientX - divStartX;
-    const totalW      = dom.panelsContainer.getBoundingClientRect().width - 4; // minus divider
-    const newAW       = Math.max(140, Math.min(totalW - 140, divAW + dx));
-    const newFW       = totalW - newAW;
-    dom.arabicPanel.style.flex = 'none';
-    dom.arabicPanel.style.width = `${newAW}px`;
-    dom.frenchPanel.style.flex = 'none';
-    dom.frenchPanel.style.width = `${newFW}px`;
+document.addEventListener('mousemove', e => {
+    if (!divDrag) return;
+    const total = el.panelsContainer.getBoundingClientRect().width - 4;
+    const newA  = Math.max(140, Math.min(total - 140, divAW + e.clientX - divStartX));
+    el.arabicPanel.style.flex  = 'none';
+    el.arabicPanel.style.width = `${newA}px`;
+    el.frenchPanel.style.flex  = 'none';
+    el.frenchPanel.style.width = `${total - newA}px`;
 });
-
 document.addEventListener('mouseup', () => {
-    if (divDragging) {
-        divDragging = false;
-        dom.panelDivider.classList.remove('active');
-        document.body.style.cursor    = '';
+    if (divDrag) {
+        divDrag = false;
+        el.panelDivider.classList.remove('active');
+        document.body.style.cursor     = '';
         document.body.style.userSelect = '';
     }
 });
 
-/* =============================================
+/* ==============================================
    DETACH / DOCK PANELS
-   Strategy: move the actual content-area DOM node
-   between the main panel and the floating panel.
-============================================= */
-function detachPanel(which) {
-    const contentEl  = which === 'arabic' ? dom.arabicContent  : dom.frenchContent;
-    const mainPanel  = which === 'arabic' ? dom.arabicPanel    : dom.frenchPanel;
-    const floatEl    = which === 'arabic' ? dom.floatingArabic : dom.floatingFrench;
-    const floatBody  = which === 'arabic' ? dom.floatingArabicBody : dom.floatingFrenchBody;
+   We physically move the content-area DOM node.
+============================================== */
+function detach(which) {
+    const contentEl = which === 'arabic' ? el.arabicContent : el.frenchContent;
+    const mainPanel = which === 'arabic' ? el.arabicPanel   : el.frenchPanel;
+    const floatEl   = which === 'arabic' ? el.floatingArabic : el.floatingFrench;
+    const bodyEl    = which === 'arabic' ? el.fArabicBody   : el.fFrenchBody;
 
-    // Move content into floating panel
-    floatBody.appendChild(contentEl);
-
-    // Show floating, hide main panel
+    bodyEl.appendChild(contentEl);
     floatEl.removeAttribute('hidden');
     mainPanel.classList.add('hidden');
-    updateDivider();
-
     if (which === 'arabic') state.arabicFloating = true;
     else                    state.frenchFloating = true;
+    updateDivider();
 }
 
-function dockPanel(which) {
-    const contentEl  = which === 'arabic' ? dom.arabicContent  : dom.frenchContent;
-    const mainPanel  = which === 'arabic' ? dom.arabicPanel    : dom.frenchPanel;
-    const floatEl    = which === 'arabic' ? dom.floatingArabic : dom.floatingFrench;
+function dock(which) {
+    const contentEl = which === 'arabic' ? el.arabicContent : el.frenchContent;
+    const mainPanel = which === 'arabic' ? el.arabicPanel   : el.frenchPanel;
+    const floatEl   = which === 'arabic' ? el.floatingArabic : el.floatingFrench;
+    const visible   = which === 'arabic' ? state.arabicVisible : state.frenchVisible;
 
-    // Move content back into main panel
     mainPanel.appendChild(contentEl);
-
-    // Hide floating, restore main panel
     floatEl.hidden = true;
-    const visible = which === 'arabic' ? state.arabicVisible : state.frenchVisible;
     if (visible) mainPanel.classList.remove('hidden');
-    updateDivider();
-
     if (which === 'arabic') state.arabicFloating = false;
     else                    state.frenchFloating = false;
+    updateDivider();
 }
 
-dom.detachArabic.addEventListener('click', () => detachPanel('arabic'));
-dom.detachFrench.addEventListener('click', () => detachPanel('french'));
-dom.dockArabic.addEventListener('click',   () => dockPanel('arabic'));
-dom.dockFrench.addEventListener('click',   () => dockPanel('french'));
+el.detachArabic.addEventListener('click', () => detach('arabic'));
+el.detachFrench.addEventListener('click', () => detach('french'));
+el.dockArabic.addEventListener('click',   () => dock('arabic'));
+el.dockFrench.addEventListener('click',   () => dock('french'));
+el.closeFArabic.addEventListener('click', () => dock('arabic'));
+el.closeFfrench.addEventListener('click', () => dock('french'));
 
-dom.closeFloatingArabic.addEventListener('click', () => {
-    dom.floatingArabic.hidden = true;
-    // Move content back to main (don't reveal panel if user toggled it off)
-    dockPanel('arabic');
-});
-dom.closeFloatingFrench.addEventListener('click', () => {
-    dom.floatingFrench.hidden = true;
-    dockPanel('french');
-});
-
-/* =============================================
-   FLOATING PANELS — DRAG
-============================================= */
+/* ==============================================
+   FLOATING — DRAG
+============================================== */
 function makeDraggable(floatEl, handleEl) {
-    let dragging = false;
-    let startX, startY, origLeft, origTop;
-
-    handleEl.addEventListener('mousedown', (e) => {
+    let dragging = false, sx, sy, ox, oy;
+    handleEl.addEventListener('mousedown', e => {
         if (e.target.closest('.btn')) return;
         dragging = true;
-        startX   = e.clientX;
-        startY   = e.clientY;
-        const r  = floatEl.getBoundingClientRect();
-        origLeft = r.left;
-        origTop  = r.top;
-        floatEl.style.right = 'auto'; // remove right if set inline
+        sx = e.clientX; sy = e.clientY;
+        const r = floatEl.getBoundingClientRect();
+        ox = r.left; oy = r.top;
+        floatEl.style.right = 'auto';
         e.preventDefault();
     });
-
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', e => {
         if (!dragging) return;
-        const dx   = e.clientX - startX;
-        const dy   = e.clientY - startY;
-        const maxX = window.innerWidth  - 60;
-        const maxY = window.innerHeight - 40;
-        floatEl.style.left = `${Math.max(0, Math.min(maxX, origLeft + dx))}px`;
-        floatEl.style.top  = `${Math.max(0, Math.min(maxY, origTop  + dy))}px`;
+        floatEl.style.left = `${Math.max(0, Math.min(window.innerWidth-80, ox + e.clientX - sx))}px`;
+        floatEl.style.top  = `${Math.max(0, Math.min(window.innerHeight-40, oy + e.clientY - sy))}px`;
     });
-
     document.addEventListener('mouseup', () => { dragging = false; });
 }
 
-/* =============================================
-   FLOATING PANELS — RESIZE
-============================================= */
+/* ==============================================
+   FLOATING — RESIZE
+============================================== */
 function makeResizable(floatEl, gripEl) {
-    let resizing = false;
-    let startX, startY, startW, startH;
-
-    gripEl.addEventListener('mousedown', (e) => {
+    let resizing = false, sx, sy, sw, sh;
+    gripEl.addEventListener('mousedown', e => {
         resizing = true;
-        startX   = e.clientX;
-        startY   = e.clientY;
-        const r  = floatEl.getBoundingClientRect();
-        startW   = r.width;
-        startH   = r.height;
-        e.preventDefault();
-        e.stopPropagation();
+        sx = e.clientX; sy = e.clientY;
+        const r = floatEl.getBoundingClientRect();
+        sw = r.width; sh = r.height;
+        e.preventDefault(); e.stopPropagation();
     });
-
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', e => {
         if (!resizing) return;
-        floatEl.style.width  = `${Math.max(240, startW + e.clientX - startX)}px`;
-        floatEl.style.height = `${Math.max(160, startH + e.clientY - startY)}px`;
+        floatEl.style.width  = `${Math.max(220, sw + e.clientX - sx)}px`;
+        floatEl.style.height = `${Math.max(160, sh + e.clientY - sy)}px`;
     });
-
     document.addEventListener('mouseup', () => { resizing = false; });
 }
 
-makeDraggable(dom.floatingArabic, el('floatingArabicHandle'));
-makeDraggable(dom.floatingFrench, el('floatingFrenchHandle'));
-makeResizable(dom.floatingArabic, el('resizeGripArabic'));
-makeResizable(dom.floatingFrench, el('resizeGripFrench'));
+makeDraggable(el.floatingArabic, $('fArabicHandle'));
+makeDraggable(el.floatingFrench, $('fFrenchHandle'));
+makeResizable(el.floatingArabic, $('rgArabic'));
+makeResizable(el.floatingFrench, $('rgFrench'));
 
-/* =============================================
+/* ==============================================
    KEYBOARD SHORTCUTS
-============================================= */
-document.addEventListener('keydown', (e) => {
-    // F11 or F — fullscreen
-    if (e.key === 'F11' || (e.key === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey
-            && document.activeElement.tagName !== 'INPUT')) {
-        e.preventDefault();
-        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-        else document.exitFullscreen();
+============================================== */
+document.addEventListener('keydown', e => {
+    const tag = document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+
+    switch (e.key) {
+        case 'F11': case 'f':
+            e.preventDefault();
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+            else document.exitFullscreen().catch(()=>{});
+            break;
+        case 'p': case 'P':
+            el.settingsOverlay.classList.contains('open') ? closeSettingsF() : openSettings();
+            break;
+        case 't': case 'T':
+            state.tvMode ? disableTV() : enableTV();
+            break;
+        case 'c': case 'C':
+            state.cameraOn ? disableCamera() : enableCamera();
+            break;
+        case 'Escape':
+            closeSettingsF();
+            if (state.tvMode) disableTV();
+            if (state.cameraOn) disableCamera();
+            break;
     }
-    // P — settings
-    if (e.key === 'p' && !e.ctrlKey && !e.metaKey
-            && document.activeElement.tagName !== 'INPUT') {
-        dom.settingsOverlay.classList.contains('open')
-            ? closeSettings()
-            : openSettings();
-    }
-    // Escape — close settings
-    if (e.key === 'Escape') closeSettings();
 });
 
-/* =============================================
+/* ==============================================
    INIT
-============================================= */
+============================================== */
 initSpeech();
 </script>
 </body>

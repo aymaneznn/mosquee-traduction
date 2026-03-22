@@ -1116,6 +1116,9 @@ function initSpeech() {
         if (final.trim()) {
             const ts   = getTs();
             const text = final.trim();
+
+            // Deduplicate — skip if same as last final result
+            if (text === lastArabicText) return;
             lastArabicText = text;
 
             // Append to arabic flow
@@ -1183,16 +1186,60 @@ function bufferTranslation(text, ts) {
 
 async function translateText(text, ts) {
     try {
-        const res  = await fetch(
-            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ar|fr`);
+        // Google Translate public endpoint (ar → fr)
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=fr&dt=t&q=${encodeURIComponent(text)}`;
+        const res  = await fetch(url);
         const data = await res.json();
-        const tr   = data.responseStatus === 200
-            ? data.responseData.translatedText
-            : fallback(text);
+
+        // data[0] is an array of [translated_chunk, source_chunk, ...]
+        let tr = '';
+        if (Array.isArray(data[0])) {
+            tr = data[0].map(chunk => (chunk && chunk[0]) ? chunk[0] : '').join('').trim();
+        }
+
+        if (!tr || tr === text) {
+            tr = fallback(text);
+        } else {
+            tr = dedupeTranslation(tr);
+        }
+
         receiveFrench(tr, text);
     } catch {
-        receiveFrench(fallback(text), text);
+        // Fallback: try mymemory
+        try {
+            const res2 = await fetch(
+                `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ar|fr`);
+            const data2 = await res2.json();
+            const tr2 = (data2.responseStatus === 200 && data2.responseData.translatedText)
+                ? dedupeTranslation(data2.responseData.translatedText)
+                : fallback(text);
+            receiveFrench(tr2, text);
+        } catch {
+            receiveFrench(fallback(text), text);
+        }
     }
+}
+
+/* Remove repeated phrases that sometimes appear in machine translation */
+function dedupeTranslation(text) {
+    if (!text) return text;
+    // Remove mymemory quota warning
+    text = text.replace(/MYMEMORY WARNING[^.]*/gi, '').trim();
+    // Detect if the whole sentence is repeated (e.g. "phrase phrase phrase")
+    const words = text.split(/\s+/);
+    const half  = Math.floor(words.length / 2);
+    if (half >= 2) {
+        const first = words.slice(0, half).join(' ');
+        const rest  = words.slice(half).join(' ');
+        if (rest.startsWith(first)) return first;
+    }
+    // Detect repeated segments separated by punctuation
+    const parts = text.split(/[.,;!?]+/).map(p => p.trim()).filter(Boolean);
+    if (parts.length > 1) {
+        const unique = [...new Set(parts)];
+        if (unique.length < parts.length) return unique.join('. ');
+    }
+    return text;
 }
 
 function receiveFrench(trText, arabicText) {
